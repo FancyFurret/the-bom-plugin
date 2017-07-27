@@ -23,7 +23,7 @@ public class TheBOMPlugin implements IModPlugin
     public void register(IModRegistry registry) {
         registry.addRecipes(CraftingRecipeChecker.getValidRecipes(registry.getJeiHelpers()), uid);
         registry.handleRecipes(BOMRecipe.class, recipe -> {
-            System.out.println("Found " + recipe.output.getDisplayName());
+//            System.out.println("Found " + recipe.output.getDisplayName());
             return new BOMWrapper(recipe, registry.getJeiHelpers());
         }, uid);
 

@@ -27,23 +27,44 @@ public final class CraftingRecipeChecker {
         return validRecipes;
     }
 
-    public static List<List<List<ItemStack>>> getRecipesForItemStack(ItemStack stackIn) {
+    public static List<IRecipe> getRecipesForItemStack(ItemStack stackIn) {
         Iterator<IRecipe> recipeIterator = CraftingManager.REGISTRY.iterator();
-        List<List<List<ItemStack>>> recipes = new ArrayList<>();
+        List<IRecipe> recipes = new ArrayList<>();
         while (recipeIterator.hasNext()) {
             IRecipe recipe = recipeIterator.next();
-            // FIXME:
             if (stackIn.isItemEqual(recipe.getRecipeOutput())) {
-                List<List<ItemStack>> recipeList = new ArrayList<>();
-                for (Ingredient ingredient : recipe.getIngredients()) {
-                    List<ItemStack> ingredients = Arrays.asList(ingredient.getMatchingStacks());
-                    recipeList.add(ingredients);
-                }
-                if (!isBlockRecipe(recipeList, recipe.getRecipeOutput(), stackIn) && (!isNuggetRecipe(recipeList, recipe.getRecipeOutput(), stackIn)))
-                    recipes.add(recipeList);
+                recipes.add(recipe);
             }
         }
         return recipes;
+//        Iterator<IRecipe> recipeIterator = CraftingManager.REGISTRY.iterator();
+//        List<List<List<ItemStack>>> recipes = new ArrayList<>();
+//        while (recipeIterator.hasNext()) {
+//            IRecipe recipe = recipeIterator.next();
+//            // FIXME:
+//            if (stackIn.isItemEqual(recipe.getRecipeOutput())) {
+//                List<List<ItemStack>> recipeList = new ArrayList<>();
+//                for (Ingredient ingredient : recipe.getIngredients()) {
+//                    List<ItemStack> ingredients = Arrays.asList(ingredient.getMatchingStacks());
+//                    recipeList.add(ingredients);
+//                }
+//                if (!isRecipeBase(recipeList, recipe.getRecipeOutput(), stackIn))
+//                    recipes.add(recipeList);
+//            }
+//        }
+//        return recipes;
+    }
+
+    private static boolean isRecipeBase(List<List<ItemStack>> recipeInput, ItemStack recipeOutput, ItemStack item) {
+
+        if (isBlockRecipe(recipeInput, recipeOutput, item)) {
+            return true;
+        }
+        else if (isNuggetRecipe(recipeInput, recipeOutput, item)) {
+            return true;
+        }
+
+        return false;
     }
 
     private static boolean isBlockRecipe(List<List<ItemStack>> recipeInput, ItemStack recipeOutput, ItemStack item) {

@@ -8,6 +8,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BOMCategory implements IRecipeCategory<BOMWrapper> {
@@ -58,7 +59,10 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
             }
         }
 
-        List<List<ItemStack>> baseIngredients = BOMCalculator.getBaseIngredients(ingredients.getInputs(ItemStack.class));
+        List<List<ItemStack>> baseIngredients =
+                BOMCalculator.getBaseIngredients(
+                        ingredients.getInputs(ItemStack.class),
+                        ingredients.getOutputs(ItemStack.class).get(0));
 
         for (int i = 0; i < baseIngredients.size(); i++) {
             guiItemStacks.set(i, baseIngredients.get(i));

@@ -97,11 +97,10 @@ public class BOMCalculator {
     ));
 
     // Items that should not be in a recipe
-    private static Map<String, Integer> recipeItemBlacklist = Collections.unmodifiableMap(new HashMap<String, Integer>() {
-        {
-            put("thermalfoundation:material", 1027); // Petrotheum Dust, only processes ores
-        }
-    });
+    private static List<ItemInfo> recipeItemBlacklist = new ArrayList<>(Arrays.asList(
+            new ItemInfo("thermalfoundation:material", 1024), // Pyrotheum Dust, only processes ores
+            new ItemInfo("thermalfoundation:material", 1027) // Petrotheum Dust, only processes ores
+    ));
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
@@ -148,18 +147,6 @@ public class BOMCalculator {
         List<IIngredients> recipes = CraftingRecipeChecker.getRecipesForItemStack(stack.get(0));
         IIngredients chosenRecipe;
 
-        // Remove invalid recipes
-//        for (IIngredients recipe : recipes) {
-//            for (List<ItemStack> seenItem : seenItems) {
-//                for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
-//                    if (recipeItem.size() != 0 && seenItem.get(0).isItemEqual(recipeItem.get(0))) {
-//                        addItemStack(baseIngredients, seenItem);
-//                        return baseIngredients;
-//                    }
-//                }
-//            }
-//        }
-
         // Pick recipe that doesn't include blacklisted items TODO: Pick best recipe
         chosenRecipe = pickBestRecipe(recipes);
 
@@ -196,14 +183,19 @@ public class BOMCalculator {
         IIngredients bestRecipe = null;
         for (IIngredients recipe : recipes) {
             boolean validRecipe = true;
+
+            if (isBlockRecipe(recipe) || isNuggetRecipe(recipe)) {
+                continue;
+            }
+
             for (List<ItemStack> item : recipe.getInputs(ItemStack.class)) {
                 if (!validRecipe)
                     break;
 
-                for (Map.Entry<String, Integer> blacklistItem : recipeItemBlacklist.entrySet()) {
+                for (ItemInfo blacklistItem : recipeItemBlacklist) {
                     if (item.size() != 0 &&
-                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem.getKey()) &&
-                            item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getValue()) {
+                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem.getRegistryName()) &&
+                            item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getDamageValue()) {
                         validRecipe = false;
                         break;
                     }
@@ -216,13 +208,56 @@ public class BOMCalculator {
         return null;
     }
 
+    private static boolean isBlockRecipe(IIngredients recipe) {
+        List<ItemStack> stack = null;
+
+        // Make sure output gives 9
+        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9) {
+            return false;
+        }
+
+        // Make sure there's only one input
+        for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
+            if (stack == null && recipeItem.size() != 0) {
+                stack = recipeItem;
+            }
+            else if (recipeItem.size() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isNuggetRecipe(IIngredients recipe) {
+        List<ItemStack> stack = null;
+
+        // Make sure output gives 1
+        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 1) {
+            return false;
+        }
+
+        // Make sure there's 9 of the same item
+        if (recipe.getInputs(ItemStack.class).size() != 9) {
+            return false;
+        }
+        for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
+            if (stack == null) {
+                stack = recipeItem;
+            }
+            else if (!recipeItem.get(0).isItemEqual(stack.get(0))){
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean isBaseItem(List<ItemStack> item) {
         if (item.size() > 1) // Is an ore dictionary item
             return true;
-        else if (item.get(0).getUnlocalizedName().toLowerCase().contains("ingot")) // Is an ingot
-            return true;
-        else if (item.get(0).getUnlocalizedName().toLowerCase().contains("ore")) // Is an ore
-            return true;
+//        else if (item.get(0).getUnlocalizedName().toLowerCase().contains("ingot")) // Is an ingot
+//            return true;
+//        else if (item.get(0).getUnlocalizedName().toLowerCase().contains("ore")) // Is an ore
+//            return true;
 
         for (String regex : baseItems)
             if (item.get(0).getItem().getRegistryName().toString().matches(regex))

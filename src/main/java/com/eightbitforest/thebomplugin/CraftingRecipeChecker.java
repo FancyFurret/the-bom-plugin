@@ -1,8 +1,12 @@
 package com.eightbitforest.thebomplugin;
 
 import mezz.jei.api.IJeiHelpers;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IRecipeWrapperFactory;
+import mezz.jei.ingredients.Ingredients;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -27,32 +31,20 @@ public final class CraftingRecipeChecker {
         return validRecipes;
     }
 
-    public static List<IRecipe> getRecipesForItemStack(ItemStack stackIn) {
-        Iterator<IRecipe> recipeIterator = CraftingManager.REGISTRY.iterator();
-        List<IRecipe> recipes = new ArrayList<>();
-        while (recipeIterator.hasNext()) {
-            IRecipe recipe = recipeIterator.next();
-            if (stackIn.isItemEqual(recipe.getRecipeOutput())) {
-                recipes.add(recipe);
-            }
+    @SuppressWarnings("unchecked")
+    public static List<IIngredients> getRecipesForItemStack(ItemStack stackIn) {
+        IJeiRuntime runtime = TheBOMPlugin.getInstance().getRuntime();
+        List<IRecipeWrapper> wrappers = runtime.getRecipeRegistry().getRecipeWrappers(runtime.getRecipeRegistry().getRecipeCategories().get(0),
+                runtime.getRecipeRegistry().createFocus(IFocus.Mode.OUTPUT, stackIn));
+
+        List<IIngredients> recipes = new ArrayList<>();
+        for (IRecipeWrapper wrapper : wrappers) {
+            IIngredients ingredients = new Ingredients();
+            wrapper.getIngredients(ingredients);
+            recipes.add(ingredients);
         }
+
         return recipes;
-//        Iterator<IRecipe> recipeIterator = CraftingManager.REGISTRY.iterator();
-//        List<List<List<ItemStack>>> recipes = new ArrayList<>();
-//        while (recipeIterator.hasNext()) {
-//            IRecipe recipe = recipeIterator.next();
-//            // FIXME:
-//            if (stackIn.isItemEqual(recipe.getRecipeOutput())) {
-//                List<List<ItemStack>> recipeList = new ArrayList<>();
-//                for (Ingredient ingredient : recipe.getIngredients()) {
-//                    List<ItemStack> ingredients = Arrays.asList(ingredient.getMatchingStacks());
-//                    recipeList.add(ingredients);
-//                }
-//                if (!isRecipeBase(recipeList, recipe.getRecipeOutput(), stackIn))
-//                    recipes.add(recipeList);
-//            }
-//        }
-//        return recipes;
     }
 
     private static boolean isRecipeBase(List<List<ItemStack>> recipeInput, ItemStack recipeOutput, ItemStack item) {

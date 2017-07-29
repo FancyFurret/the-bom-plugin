@@ -7,13 +7,22 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 public class BOMCalculator {
     private BOMCalculator() {}
+//<mezz> if that is what you are asking, you can call mezz.jei.api.IRecipeRegistry#getRecipeWrappers(IRecipeCategory<T>, IFocus<V>)
+//<mezz> * osum4est (~osumf@c-67-182-192-22.hsd1.ut.comcast.net) has joined
+//<mezz> <mezz> that will give you a list of recipes that  JEI knows of
+//<mezz> <mezz> you can get the IRecipeCategory for crafting by calling mezz.jei.api.IRecipeRegistry#getRecipeCategories(List<java.lang.String>)
+//<mezz> <mezz> you can create a focus with mezz.jei.api.IRecipeRegistry#createFocus
 
+//    nope, everything is stored per-category internally so it wouldn't be any more efficient. you can just make a helper method for it
+//<mezz> you *can* limit the categories by using mezz.jei.api.IRecipeRegistry#getRecipeCategories(IFocus<V>)
+//    <mezz> that way you only check the list of categories that actually contain the thing you're looking up
+
+    // Items that should not be crafted
     private static ArrayList<String> baseItems = new ArrayList<>(Arrays.asList(
             "^minecraft:grass$",
             "^minecraft:dirt$",
@@ -83,8 +92,16 @@ public class BOMCalculator {
             "^minecraft:map$",
             "^minecraft:skull$",
             "^minecraft:nether_star$",
-            "^minecraft:record_.*$"
+            "^minecraft:record_.*$",
+            "^minecraft:diamond*$"
     ));
+
+    // Items that should not be in a recipe
+    private static Map<String, Integer> recipeItemBlacklist = Collections.unmodifiableMap(new HashMap<String, Integer>() {
+        {
+            put("thermalfoundation:material", 1027); // Petrotheum Dust, only processes ores
+        }
+    });
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
@@ -96,6 +113,11 @@ public class BOMCalculator {
 
     private static List<List<ItemStack>> getBaseIngredientsForItem(List<ItemStack> stack, List<List<ItemStack>> seenItems) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
+
+        // Make sure stack isn't empty
+        if (stack.size() == 0) {
+            return baseIngredients;
+        }
 
         // Don't recurse too much
         if (seenItems.size() > 512) {
@@ -117,12 +139,23 @@ public class BOMCalculator {
             return baseIngredients;
         }
 
-        List<IRecipe> recipes = CraftingRecipeChecker.getRecipesForItemStack(stack.get(0));
+        // Get matching recipes
+        List<IIngredients> recipes = CraftingRecipeChecker.getRecipesForItemStack(stack.get(0));
+        IIngredients chosenRecipe;
 
-        // Make sure recipe doesn't need something we already saw
+        // Pick recipe that doesn't include blacklisted items TODO: Pick best recipe
+        chosenRecipe = pickBestRecipe(recipes);
+
+        // Make sure that there is a good recipe
+        if (chosenRecipe == null) {
+            addItemStack(baseIngredients, stack);
+            return baseIngredients;
+        }
+
+        // Make sure recipe doesn't need something we already saw TODO: Fix to pick original stack
         for (List<ItemStack> item : seenItems) {
-            for (Ingredient ingredient : recipes.get(0).getIngredients()) {
-                if (ingredient.getMatchingStacks()[0].isItemEqual(item.get(0))) {
+            for (List<ItemStack> recipeItem : chosenRecipe.getOutputs(ItemStack.class)) {
+                if (recipeItem.get(0).isItemEqual(item.get(0))) {
                     addItemStack(baseIngredients, item);
                     return baseIngredients;
                 }
@@ -130,14 +163,39 @@ public class BOMCalculator {
 
         }
 
-        for (Ingredient recipeItem : recipes.get(0).getIngredients()) {
+        // Add components to ingredients
+        for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
             List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
             newSeenItems.add(stack);
 
-            addToIngredients(baseIngredients, getBaseIngredientsForItem(Arrays.asList(recipeItem.getMatchingStacks()), newSeenItems));
+            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems));
         }
 
         return baseIngredients;
+    }
+
+    private static IIngredients pickBestRecipe(List<IIngredients> recipes) {
+        IIngredients bestRecipe = null;
+        for (IIngredients recipe : recipes) {
+            boolean validRecipe = true;
+            for (List<ItemStack> item : recipe.getInputs(ItemStack.class)) {
+                if (!validRecipe)
+                    break;
+
+                for (Map.Entry<String, Integer> blacklistItem : recipeItemBlacklist.entrySet()) {
+                    if (item.size() != 0 &&
+                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem.getKey()) &&
+                            item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getValue()) {
+                        validRecipe = false;
+                        break;
+                    }
+                }
+            }
+            if (validRecipe) {
+                return recipe;
+            }
+        }
+        return null;
     }
 
     private static boolean isBaseItem(List<ItemStack> item) {

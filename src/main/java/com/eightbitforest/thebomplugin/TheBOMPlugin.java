@@ -1,18 +1,37 @@
 package com.eightbitforest.thebomplugin;
 
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.JEIPlugin;
+import mezz.jei.api.*;
+import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import org.omg.PortableServer.THREAD_POLICY_ID;
 
 @JEIPlugin
 public class TheBOMPlugin implements IModPlugin
 {
     protected static String uid = "bomplugin";
+    private IJeiRuntime runtime;
+    private IIngredientRegistry ingredientRegistry;
+    private static TheBOMPlugin instance;
+
+    public static TheBOMPlugin getInstance() {
+        return instance;
+    }
+
+    public IJeiRuntime getRuntime() {
+        return runtime;
+    }
+
+    public IIngredientRegistry getIngredientRegistry() {
+        return ingredientRegistry;
+    }
+
+    public TheBOMPlugin(){
+        instance = this;
+    }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
@@ -26,8 +45,13 @@ public class TheBOMPlugin implements IModPlugin
 //            System.out.println("Found " + recipe.output.getDisplayName());
             return new BOMWrapper(recipe, registry.getJeiHelpers());
         }, uid);
+        ingredientRegistry = registry.getIngredientRegistry();
+    }
 
-        registry.addRecipeCatalyst(new ItemStack(Blocks.COAL_BLOCK), uid);
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        runtime = jeiRuntime;
+//        jeiRuntime.getRecipeRegistry().getRecipeWrappers(jeiRuntime.getRecipeRegistry().getre)
     }
 }
 

@@ -92,8 +92,8 @@ public class BOMCalculator {
             "^minecraft:map$",
             "^minecraft:skull$",
             "^minecraft:nether_star$",
-            "^minecraft:record_.*$",
-            "^minecraft:diamond*$"
+            "^minecraft:record_.*$"
+//            "^minecraft:diamond*$"
     ));
 
     // Items that should not be in a recipe
@@ -105,8 +105,13 @@ public class BOMCalculator {
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
+
         for (List<ItemStack> recipeItem : recipe) {
-            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, new ArrayList<>(Arrays.asList(stack))));
+            List<List<ItemStack>> seenItems = new ArrayList<>(Arrays.asList(
+                    stack
+//                    recipeItem
+            ));
+            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems));
         }
         return baseIngredients;
     }
@@ -152,7 +157,7 @@ public class BOMCalculator {
             return baseIngredients;
         }
 
-        // Make sure recipe doesn't need something we already saw TODO: Fix to pick original stack
+        // Make sure recipe doesn't need something we already saw
         for (List<ItemStack> item : seenItems) {
             for (List<ItemStack> recipeItem : chosenRecipe.getOutputs(ItemStack.class)) {
                 if (recipeItem.get(0).isItemEqual(item.get(0))) {
@@ -171,7 +176,22 @@ public class BOMCalculator {
             addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems));
         }
 
+        // If we have an item that is already in seenItems, just return the seen item
+        validateBaseIngredients(baseIngredients, seenItems);
+
         return baseIngredients;
+    }
+
+    private static void validateBaseIngredients(List<List<ItemStack>> baseIngredients, List<List<ItemStack>> seenItems) {
+        for (List<ItemStack> baseIngredient : baseIngredients) {
+            for (List<ItemStack> seenItem : seenItems) {
+                if (baseIngredient.get(0).isItemEqual(seenItem.get(0))) {
+                    baseIngredients.clear();
+                    baseIngredients.add(seenItem);
+                    return;
+                }
+            }
+        }
     }
 
     private static IIngredients pickBestRecipe(List<IIngredients> recipes) {

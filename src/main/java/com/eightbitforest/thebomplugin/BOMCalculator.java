@@ -148,6 +148,18 @@ public class BOMCalculator {
         List<IIngredients> recipes = CraftingRecipeChecker.getRecipesForItemStack(stack.get(0));
         IIngredients chosenRecipe;
 
+        // Remove invalid recipes
+//        for (IIngredients recipe : recipes) {
+//            for (List<ItemStack> seenItem : seenItems) {
+//                for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
+//                    if (recipeItem.size() != 0 && seenItem.get(0).isItemEqual(recipeItem.get(0))) {
+//                        addItemStack(baseIngredients, seenItem);
+//                        return baseIngredients;
+//                    }
+//                }
+//            }
+//        }
+
         // Pick recipe that doesn't include blacklisted items TODO: Pick best recipe
         chosenRecipe = pickBestRecipe(recipes);
 
@@ -157,42 +169,28 @@ public class BOMCalculator {
             return baseIngredients;
         }
 
-        // Make sure recipe doesn't need something we already saw
+        // Make sure recipe doesn't need something we already saw TODO: Combine with pickBestRecipe
         for (List<ItemStack> item : seenItems) {
-            for (List<ItemStack> recipeItem : chosenRecipe.getOutputs(ItemStack.class)) {
-                if (recipeItem.get(0).isItemEqual(item.get(0))) {
+            for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
+                if (recipeItem.size() != 0 && recipeItem.get(0).isItemEqual(item.get(0))) {
                     addItemStack(baseIngredients, item);
                     return baseIngredients;
                 }
             }
-
         }
 
         // Add components to ingredients
         for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
             List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
-            newSeenItems.add(stack);
-
-            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems));
+            if (stack.size() != 0) {
+                newSeenItems.add(stack);
+                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems));
+            }
         }
-
-        // If we have an item that is already in seenItems, just return the seen item
-        validateBaseIngredients(baseIngredients, seenItems);
 
         return baseIngredients;
     }
 
-    private static void validateBaseIngredients(List<List<ItemStack>> baseIngredients, List<List<ItemStack>> seenItems) {
-        for (List<ItemStack> baseIngredient : baseIngredients) {
-            for (List<ItemStack> seenItem : seenItems) {
-                if (baseIngredient.get(0).isItemEqual(seenItem.get(0))) {
-                    baseIngredients.clear();
-                    baseIngredients.add(seenItem);
-                    return;
-                }
-            }
-        }
-    }
 
     private static IIngredients pickBestRecipe(List<IIngredients> recipes) {
         IIngredients bestRecipe = null;

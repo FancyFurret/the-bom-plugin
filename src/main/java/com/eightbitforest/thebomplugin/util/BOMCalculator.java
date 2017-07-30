@@ -118,6 +118,11 @@ public class BOMCalculator {
             return baseIngredients;
         }
 
+        // See if we have an extra output for recipeItem
+        if (checkForExtraItem(extraOutputs, stack)) {
+            return baseIngredients;
+        }
+
         // Don't recurse too much
         if (seenItems.size() > 512) {
             addItemStack(baseIngredients, stack);
@@ -172,12 +177,9 @@ public class BOMCalculator {
         // Add recipe components to ingredients
         for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
             if (recipeItem.size() != 0) {
-                // See if we have an extra output for recipeItem
-                if (!checkForExtraItem(extraOutputs, recipeItem)) {
-                    List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
-                    newSeenItems.add(stack);
-                    addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems, extraOutputs));
-                }
+                List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
+                newSeenItems.add(stack);
+                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems, extraOutputs));
             }
         }
 

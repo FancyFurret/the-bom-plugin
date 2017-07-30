@@ -15,17 +15,27 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
     private final IDrawable background;
+    private final IDrawable icon;
     private final ItemStackComparator itemStackComparator;
 
     public BOMCategory(IGuiHelper guiHelper) {
-        ResourceLocation location = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_BACKGROUND_TEXTURE);
-        background = guiHelper.createDrawable(location, 0, 0, 163, 119);
+        ResourceLocation backgroundLocation = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_BACKGROUND_TEXTURE);
+        ResourceLocation iconLocation = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_TAB_ICON_TEXTURE);
+        background = guiHelper.createDrawable(backgroundLocation, 0, 0, 163, 119);
+        icon = guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
         itemStackComparator = new ItemStackComparator();
+    }
+
+    @Nullable
+    @Override
+    public IDrawable getIcon() {
+        return icon;
     }
 
     @Override
@@ -69,6 +79,7 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
         // Sort by number of items in each stack
         baseIngredients.sort(itemStackComparator);
+//        baseIngredients.get(0).get(0).settool
 
         // Fill gui stacks
         guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));

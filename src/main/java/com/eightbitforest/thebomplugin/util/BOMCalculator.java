@@ -1,14 +1,9 @@
-package com.eightbitforest.thebomplugin;
+package com.eightbitforest.thebomplugin.util;
 
 import mezz.jei.api.ingredients.IIngredients;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public class BOMCalculator {
     private BOMCalculator() {}
@@ -144,7 +139,7 @@ public class BOMCalculator {
         }
 
         // Get matching recipes
-        List<IIngredients> recipes = CraftingRecipeChecker.getRecipesForItemStack(stack.get(0));
+        List<IIngredients> recipes = Recipes.getRecipesForItemStack(stack.get(0));
         IIngredients chosenRecipe;
 
         // Pick recipe that doesn't include blacklisted items TODO: Pick best recipe
@@ -241,7 +236,10 @@ public class BOMCalculator {
             return false;
         }
         for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
-            if (stack == null) {
+            if (recipeItem.size() == 0) {
+                return false;
+            }
+            else if (stack == null) {
                 stack = recipeItem;
             }
             else if (!recipeItem.get(0).isItemEqual(stack.get(0))){

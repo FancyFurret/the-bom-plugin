@@ -1,18 +1,10 @@
-package com.eightbitforest.thebomplugin;
+package com.eightbitforest.thebomplugin.bom;
 
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IStackHelper;
 import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
-import mezz.jei.api.recipe.wrapper.IShapedCraftingRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-
-import java.awt.*;
-import java.util.List;
 
 
 public class BOMWrapper implements ICraftingRecipeWrapper {
@@ -33,9 +25,6 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
 
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-//        minecraft.fontRenderer.drawString(recipe.inputs.get(0).size() + " recipe(s).", 0, 10, Color.black.getRGB());
-//        minecraft.fontRenderer.drawString("1. " + recipe.inputs.get(0).get(0).getDisplayName(), 0, 20, Color.black.getRGB());
-//        GuiButton b = new GuiButton(0, 0, 0, 100, 100, "This is a test button");
     }
 
     @Override

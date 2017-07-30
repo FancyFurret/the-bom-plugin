@@ -1,4 +1,4 @@
-package com.eightbitforest.thebomplugin;
+package com.eightbitforest.thebomplugin.util;
 
 public class ItemInfo {
     private String registryName;

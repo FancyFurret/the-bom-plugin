@@ -1,18 +1,20 @@
 package com.eightbitforest.thebomplugin;
 
-import mezz.jei.api.*;
+import com.eightbitforest.thebomplugin.bom.BOMCategory;
+import com.eightbitforest.thebomplugin.bom.BOMRecipe;
+import com.eightbitforest.thebomplugin.bom.BOMWrapper;
+import com.eightbitforest.thebomplugin.util.Recipes;
+import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.IModRegistry;
+import mezz.jei.api.JEIPlugin;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 @JEIPlugin
 public class TheBOMPlugin implements IModPlugin
 {
-    protected static String uid = "bomplugin";
+    public static String uid = "thebomplugin";
     private IJeiRuntime runtime;
     private IIngredientRegistry ingredientRegistry;
     private static TheBOMPlugin instance;
@@ -35,36 +37,18 @@ public class TheBOMPlugin implements IModPlugin
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
-        registry.addRecipeCategories(new BOMCategory());
+        registry.addRecipeCategories(new BOMCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void register(IModRegistry registry) {
-        registry.addRecipes(CraftingRecipeChecker.getValidRecipes(registry.getJeiHelpers()), uid);
-        registry.handleRecipes(BOMRecipe.class, recipe -> {
-//            System.out.println("Found " + recipe.output.getDisplayName());
-            return new BOMWrapper(recipe, registry.getJeiHelpers());
-        }, uid);
+        registry.addRecipes(Recipes.getValidRecipes(registry.getJeiHelpers()), uid);
+        registry.handleRecipes(BOMRecipe.class, recipe -> new BOMWrapper(recipe, registry.getJeiHelpers()), uid);
         ingredientRegistry = registry.getIngredientRegistry();
     }
 
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
-//        jeiRuntime.getRecipeRegistry().getRecipeWrappers(jeiRuntime.getRecipeRegistry().getre)
     }
 }
-
-//public class TheBOMPlugin
-//{
-//    public static final String MODID = "thebomplugin";
-//    public static final String VERSION = "1.0";
-//
-//    @EventHandler
-//    public void init(FMLInitializationEvent event)
-//    {
-//        // some example code
-//        System.out.println("DIRT BLOCK >> "+Blocks.DIRT.getUnlocalizedName());
-//    }
-//}
-

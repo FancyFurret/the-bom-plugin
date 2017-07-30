@@ -1,4 +1,4 @@
-package com.eightbitforest.thebomplugin;
+package com.eightbitforest.thebomplugin.bom;
 
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;

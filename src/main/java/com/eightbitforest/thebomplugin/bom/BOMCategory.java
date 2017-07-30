@@ -66,8 +66,8 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
                         ingredients.getOutputs(ItemStack.class).get(0));
 
         guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));
-        for (int i = 1; i < baseIngredients.size(); i++) {
-            guiItemStacks.set(i, baseIngredients.get(i));
+        for (int i = 0; i < baseIngredients.size(); i++) {
+            guiItemStacks.set(i + 1, baseIngredients.get(i));
         }
     }
 }

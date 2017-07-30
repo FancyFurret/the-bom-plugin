@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
+import static sun.management.snmp.jvminstr.JvmThreadInstanceEntryImpl.ThreadStateMap.Byte1.other;
+
 public class BOMCalculator {
     private BOMCalculator() {}
 //<mezz> if that is what you are asking, you can call mezz.jei.api.IRecipeRegistry#getRecipeWrappers(IRecipeCategory<T>, IFocus<V>)
@@ -99,18 +101,16 @@ public class BOMCalculator {
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
+        List<List<ItemStack>> extraOutputs = new ArrayList<>();
 
         for (List<ItemStack> recipeItem : recipe) {
-            List<List<ItemStack>> seenItems = new ArrayList<>(Arrays.asList(
-                    stack
-//                    recipeItem
-            ));
-            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems));
+            List<List<ItemStack>> seenItems = new ArrayList<>(Arrays.asList(stack));
+            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs));
         }
         return baseIngredients;
     }
 
-    private static List<List<ItemStack>> getBaseIngredientsForItem(List<ItemStack> stack, List<List<ItemStack>> seenItems) {
+    private static List<List<ItemStack>> getBaseIngredientsForItem(List<ItemStack> stack, List<List<ItemStack>> seenItems, List<List<ItemStack>> extraOutputs) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
 
         // Make sure stack isn't empty
@@ -154,25 +154,49 @@ public class BOMCalculator {
         // Make sure recipe doesn't need something we already saw TODO: Combine with pickBestRecipe
         for (List<ItemStack> item : seenItems) {
             for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
-                if (recipeItem.size() != 0 && recipeItem.get(0).isItemEqual(item.get(0))) {
+                if (recipeItem.size() != 0 && areItemStacksEqualIgnoreSize(recipeItem.get(0), item.get(0))) {
                     addItemStack(baseIngredients, item);
                     return baseIngredients;
                 }
             }
         }
 
-        // Add components to ingredients
+        // See if we have extra outputs
+        List<ItemStack> recipeOutput = chosenRecipe.getOutputs(ItemStack.class).get(0);
+        if (recipeOutput.get(0).getCount() > 1) {
+            List<ItemStack> extraStack = new ArrayList<>(Arrays.asList(recipeOutput.get(0).copy()));
+            decreaseStackCount(extraStack);
+            addToIngredients(extraOutputs, new ArrayList<>(Arrays.asList(extraStack)));
+        }
+
+        // Add recipe components to ingredients
         for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
-            List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
-            if (stack.size() != 0) {
-                newSeenItems.add(stack);
-                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems));
+            if (recipeItem.size() != 0) {
+                // See if we have an extra output for recipeItem
+                if (!checkForExtraItem(extraOutputs, recipeItem)) {
+                    List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
+                    newSeenItems.add(stack);
+                    addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems, extraOutputs));
+                }
             }
         }
 
         return baseIngredients;
     }
 
+    private static boolean checkForExtraItem(List<List<ItemStack>> extraItems, List<ItemStack> recipeItem) {
+        for (List<ItemStack> extraItem : extraItems) {
+            if (areItemStacksEqualIgnoreSize(extraItem.get(0), recipeItem.get(0))) {
+                decreaseStackCount(extraItem);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void decreaseStackCount(List<ItemStack> stack) {
+        stack.get(0).setCount(stack.get(0).getCount() - 1);
+    }
 
     private static IIngredients pickBestRecipe(List<IIngredients> recipes) {
         IIngredients bestRecipe = null;
@@ -242,7 +266,7 @@ public class BOMCalculator {
             else if (stack == null) {
                 stack = recipeItem;
             }
-            else if (!recipeItem.get(0).isItemEqual(stack.get(0))){
+            else if (!areItemStacksEqualIgnoreSize(recipeItem.get(0), stack.get(0))){
                 return false;
             }
         }
@@ -272,7 +296,7 @@ public class BOMCalculator {
 
     private static void addItemStack(List<List<ItemStack>> stacks, List<ItemStack> stackToAdd) {
         for (List<ItemStack> stack : stacks) {
-            if (stack.get(0).isItemEqual(stackToAdd.get(0))) {
+            if (areItemStacksEqualIgnoreSize(stack.get(0), stackToAdd.get(0))) {
                 for (ItemStack oreDictStack : stack) {
                     oreDictStack.setCount(oreDictStack.getCount() + stackToAdd.get(0).getCount());
                 }
@@ -285,5 +309,24 @@ public class BOMCalculator {
             stackToAddCopy.add(stack.copy());
         }
         stacks.add(stackToAddCopy);
+    }
+
+    private static boolean areItemStacksEqualIgnoreSize(ItemStack stackA, ItemStack stackB) {
+        if (stackA.isEmpty() && stackB.isEmpty()) {
+            return true;
+        } else {
+            if (!stackA.isEmpty() && !stackB.isEmpty()){
+                if (stackA.getItem() != stackB.getItem()) {
+                    return false;
+                } else if (stackA.getItemDamage() != stackB.getItemDamage()) {
+                    return false;
+                } else {
+                    return ItemStack.areItemStackTagsEqual(stackA, stackB) && stackA.areCapsCompatible(stackB);
+                }
+            }
+            else {
+                return false;
+            }
+        }
     }
 }

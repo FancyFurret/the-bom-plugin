@@ -3,6 +3,7 @@ package com.eightbitforest.thebomplugin.bom;
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.util.BOMCalculator;
+import com.eightbitforest.thebomplugin.util.ItemStackComparator;
 import com.eightbitforest.thebomplugin.util.Resources;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -19,10 +20,12 @@ import java.util.List;
 public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
     private final IDrawable background;
+    private final ItemStackComparator itemStackComparator;
 
     public BOMCategory(IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_BACKGROUND_TEXTURE);
         background = guiHelper.createDrawable(location, 0, 0, 163, 119);
+        itemStackComparator = new ItemStackComparator();
     }
 
     @Override
@@ -49,7 +52,7 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     public void setRecipe(IRecipeLayout iRecipeLayout, BOMWrapper bomWrapper, IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = iRecipeLayout.getItemStacks();
 
-
+        // Init gui stacks, 0 being the output
         guiItemStacks.init(0, true, 72, 91);
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 9; x++) {
@@ -58,13 +61,16 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
             }
         }
 
-
-
+        // Get base ingredients
         List<List<ItemStack>> baseIngredients =
                 BOMCalculator.getBaseIngredients(
                         ingredients.getInputs(ItemStack.class),
                         ingredients.getOutputs(ItemStack.class).get(0));
 
+        // Sort by number of items in each stack
+        baseIngredients.sort(itemStackComparator);
+
+        // Fill gui stacks
         guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));
         for (int i = 0; i < baseIngredients.size(); i++) {
             guiItemStacks.set(i + 1, baseIngredients.get(i));

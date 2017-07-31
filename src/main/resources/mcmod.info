@@ -1,16 +1,16 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
-  "version": "${version}",
+  "modid": "thebomplugin",
+  "name": "The BOM Plugin",
+  "description": "A plugin for JEI that lists components needed to craft complex items and blocks.",
+  "version": "0.1",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "http://github.com/osum4est/the-bom-plugin",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["osum4est"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": ["jei"]
 }
 ]

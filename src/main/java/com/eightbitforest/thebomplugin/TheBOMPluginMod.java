@@ -8,9 +8,4 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 public class TheBOMPluginMod {
     public static final String MODID = "thebomplugin";
     public static final String VERSION = "0.1";
-
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-    }
 }

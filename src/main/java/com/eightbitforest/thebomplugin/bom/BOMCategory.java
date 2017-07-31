@@ -3,6 +3,7 @@ package com.eightbitforest.thebomplugin.bom;
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.util.BOMCalculator;
+import com.eightbitforest.thebomplugin.util.BOMIngredientRenderer;
 import com.eightbitforest.thebomplugin.util.ItemStackComparator;
 import com.eightbitforest.thebomplugin.util.Constants;
 import mezz.jei.api.IGuiHelper;
@@ -22,6 +23,7 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     private final IDrawable background;
     private final IDrawable icon;
     private final ItemStackComparator itemStackComparator;
+    private final BOMIngredientRenderer ingredientRenderer;
 
     public BOMCategory(IGuiHelper guiHelper) {
         ResourceLocation backgroundLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_BACKGROUND_TEXTURE);
@@ -29,6 +31,7 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
         background = guiHelper.createDrawable(backgroundLocation, 0, 0, 163, 119);
         icon = guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
         itemStackComparator = new ItemStackComparator();
+        ingredientRenderer = new BOMIngredientRenderer();
     }
 
     @Nullable
@@ -62,11 +65,11 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
         IGuiItemStackGroup guiItemStacks = iRecipeLayout.getItemStacks();
 
         // Init gui stacks, 0 being the output
-        guiItemStacks.init(0, true, 72, 91);
+        guiItemStacks.init(0, false, 72, 91);
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 9; x++) {
                 int index = x + (y * 9);
-                guiItemStacks.init(index + 1, true, x * 18, y * 18);
+                guiItemStacks.init(index + 1, true, ingredientRenderer, x * 18 + 1, y * 18 + 1, 16, 16, 0, 0);
             }
         }
 

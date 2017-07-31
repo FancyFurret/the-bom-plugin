@@ -7,7 +7,7 @@ import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.ingredients.Ingredients;
+import com.eightbitforest.thebomplugin.jei.ingredients.Ingredients;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 

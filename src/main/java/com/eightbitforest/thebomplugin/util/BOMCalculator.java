@@ -1,5 +1,6 @@
 package com.eightbitforest.thebomplugin.util;
 
+import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagByte;
@@ -9,21 +10,7 @@ import java.util.*;
 public class BOMCalculator {
     private BOMCalculator() {}
 
-    // Basic items that don't need to be broken down
-    private static ArrayList<String> baseItems = new ArrayList<>(Arrays.asList(
-            "^minecraft:stick$",
-            "^minecraft:torch$",
-            "^minecraft:leather$",
-            "^minecraft:paper$",
-            "^minecraft:wool$"
-    ));
 
-    // Items that should not be in a recipe
-    private static List<ItemInfo> recipeItemBlacklist = new ArrayList<>(Arrays.asList(
-            new ItemInfo("thermalfoundation:material", -1) // Pyrotheum Dust, only processes ores
-//            new ItemInfo("thermalfoundation:material", 1025), // Cryotheum Dust, produces base items
-//            new ItemInfo("thermalfoundation:material", 1027) // Petrotheum Dust, only processes ores
-    ));
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
@@ -140,10 +127,9 @@ public class BOMCalculator {
                 if (!validRecipe)
                     break;
 
-                for (ItemInfo blacklistItem : recipeItemBlacklist) {
+                for (String blacklistItem : TheBOMPluginMod.getInstance().getConfig().recipeItemBlacklist) {
                     if (item.size() != 0 &&
-                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem.getRegistryName()) &&
-                            (blacklistItem.getDamageValue() == -1 || item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getDamageValue())) {
+                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem)) {
                         validRecipe = false;
                         break;
                     }
@@ -160,7 +146,8 @@ public class BOMCalculator {
         List<ItemStack> stack = null;
 
         // Make sure output gives 9
-        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9) {
+        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9 &&
+                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 4) {
             return false;
         }
 
@@ -185,7 +172,8 @@ public class BOMCalculator {
         }
 
         // Make sure there's 9 of the same item
-        if (recipe.getInputs(ItemStack.class).size() != 9) {
+        if (recipe.getInputs(ItemStack.class).size() != 9 &&
+                recipe.getInputs(ItemStack.class).size() != 4) {
             return false;
         }
         for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
@@ -210,7 +198,7 @@ public class BOMCalculator {
 //        else if (item.get(0).getUnlocalizedName().toLowerCase().contains("ore")) // Is an ore
 //            return true;
 
-        for (String regex : baseItems)
+        for (String regex : TheBOMPluginMod.getInstance().getConfig().baseItems)
             if (item.get(0).getItem().getRegistryName().toString().matches(regex))
                 return true;
 

@@ -1,4 +1,4 @@
-package mezz.jei.ingredients;
+package com.eightbitforest.thebomplugin.jei.ingredients;
 
 import java.util.ArrayList;
 import java.util.Collections;

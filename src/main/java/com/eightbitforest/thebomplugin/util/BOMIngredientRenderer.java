@@ -1,5 +1,7 @@
 package com.eightbitforest.thebomplugin.util;
 
+import com.eightbitforest.thebomplugin.TheBOMPlugin;
+import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,11 +21,19 @@ public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
             TextFormatting.DARK_AQUA.toString();
     private static final String reset =
             TextFormatting.RESET.toString();
-    private static final float fontScale = .5f;
+    private static float fontScale = -1f;
+
+    public BOMIngredientRenderer() {
+    }
 
     @Override
     public void render(Minecraft minecraft, int x, int y, @Nullable ItemStack itemStack) {
         if (itemStack != null) {
+
+            if (fontScale == -1f) {
+                fontScale = TheBOMPluginMod.getInstance().getConfig().textScale;
+            }
+
             RenderHelper.enableGUIStandardItemLighting();
             FontRenderer fontRenderer = getFontRenderer(minecraft, itemStack);
 
@@ -38,14 +48,14 @@ public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
 
     private void drawItemAmount(FontRenderer fontRenderer, String amount, int x, int y) {
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, 1);
+        GlStateManager.translate(x + (16 * (1 - fontScale)), y + (16 * (1 - fontScale)), 1);
         GL11.glScalef(fontScale, fontScale, 1);
 
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
         GlStateManager.disableBlend();
 
-        fontRenderer.drawStringWithShadow(amount, 30 - fontRenderer.getStringWidth(amount), 22, 16777215);
+        fontRenderer.drawStringWithShadow(amount, 17 - fontRenderer.getStringWidth(amount), 9, 16777215);
 
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();

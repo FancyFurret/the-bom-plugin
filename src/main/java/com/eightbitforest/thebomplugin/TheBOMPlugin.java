@@ -3,6 +3,7 @@ package com.eightbitforest.thebomplugin;
 import com.eightbitforest.thebomplugin.bom.BOMCategory;
 import com.eightbitforest.thebomplugin.bom.BOMRecipe;
 import com.eightbitforest.thebomplugin.bom.BOMWrapper;
+import com.eightbitforest.thebomplugin.util.BOMConfig;
 import com.eightbitforest.thebomplugin.util.Recipes;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
@@ -15,9 +16,12 @@ import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 public class TheBOMPlugin implements IModPlugin
 {
     public static String uid = "thebomplugin";
+
+    private static TheBOMPlugin instance;
+
     private IJeiRuntime runtime;
     private IIngredientRegistry ingredientRegistry;
-    private static TheBOMPlugin instance;
+
 
     public static TheBOMPlugin getInstance() {
         return instance;

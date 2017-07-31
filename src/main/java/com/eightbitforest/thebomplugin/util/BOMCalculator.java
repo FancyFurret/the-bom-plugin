@@ -20,9 +20,9 @@ public class BOMCalculator {
 
     // Items that should not be in a recipe
     private static List<ItemInfo> recipeItemBlacklist = new ArrayList<>(Arrays.asList(
-            new ItemInfo("thermalfoundation:material", 1024), // Pyrotheum Dust, only processes ores
-            new ItemInfo("thermalfoundation:material", 1025), // Cryotheum Dust, produces base items
-            new ItemInfo("thermalfoundation:material", 1027) // Petrotheum Dust, only processes ores
+            new ItemInfo("thermalfoundation:material", -1) // Pyrotheum Dust, only processes ores
+//            new ItemInfo("thermalfoundation:material", 1025), // Cryotheum Dust, produces base items
+//            new ItemInfo("thermalfoundation:material", 1027) // Petrotheum Dust, only processes ores
     ));
 
     public static List<List<ItemStack>> getBaseIngredients(List<List<ItemStack>> recipe, List<ItemStack> stack) {
@@ -143,7 +143,7 @@ public class BOMCalculator {
                 for (ItemInfo blacklistItem : recipeItemBlacklist) {
                     if (item.size() != 0 &&
                             item.get(0).getItem().getRegistryName().toString().matches(blacklistItem.getRegistryName()) &&
-                            item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getDamageValue()) {
+                            (blacklistItem.getDamageValue() == -1 || item.get(0).getItem().getDamage(item.get(0)) == blacklistItem.getDamageValue())) {
                         validRecipe = false;
                         break;
                     }

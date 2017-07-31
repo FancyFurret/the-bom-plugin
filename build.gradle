@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12-0.1"
+version = "1.12-0.1.0"
 group = "com.eightbitforest.thebomplugin" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "thebomplugin"
 
@@ -21,7 +21,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12-14.21.1.2415"
+    version = "1.12-14.21.1.2428"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -69,9 +69,9 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     // compile against the JEI API but do not include it at runtime
-    deobfProvided "mezz.jei:jei_1.12:4.7.1.69:api"
+    deobfProvided "mezz.jei:jei_1.12:$jei_version:api"
     // at runtime, use the full JEI jar
-    runtime "mezz.jei:jei_1.12:4.7.1.69"
+    runtime "mezz.jei:jei_1.12:$jei_version"
 
 }
 

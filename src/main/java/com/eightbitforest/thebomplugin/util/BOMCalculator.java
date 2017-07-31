@@ -2,10 +2,9 @@ package com.eightbitforest.thebomplugin.util;
 
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagByte;
 
 import java.util.*;
-
-import static sun.management.snmp.jvminstr.JvmThreadInstanceEntryImpl.ThreadStateMap.Byte1.other;
 
 public class BOMCalculator {
     private BOMCalculator() {}
@@ -107,6 +106,9 @@ public class BOMCalculator {
             List<List<ItemStack>> seenItems = new ArrayList<>(Arrays.asList(stack));
             addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs));
         }
+
+        markIngredientsWithNBT(baseIngredients);
+
         return baseIngredients;
     }
 
@@ -184,6 +186,12 @@ public class BOMCalculator {
         }
 
         return baseIngredients;
+    }
+
+    private static void markIngredientsWithNBT(List<List<ItemStack>> ingredients) {
+        ingredients.forEach(ingredient -> ingredient.forEach(stack -> {
+            stack.setTagInfo(Constants.BOM_ITEMSTACK_NBT_MARK, new NBTTagByte((byte)0));
+        }));
     }
 
     private static boolean checkForExtraItem(List<List<ItemStack>> extraItems, List<ItemStack> recipeItem) {

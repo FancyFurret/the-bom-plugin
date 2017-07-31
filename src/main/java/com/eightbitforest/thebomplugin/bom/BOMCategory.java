@@ -4,14 +4,13 @@ import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.util.BOMCalculator;
 import com.eightbitforest.thebomplugin.util.ItemStackComparator;
-import com.eightbitforest.thebomplugin.util.Resources;
+import com.eightbitforest.thebomplugin.util.Constants;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -25,8 +24,8 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     private final ItemStackComparator itemStackComparator;
 
     public BOMCategory(IGuiHelper guiHelper) {
-        ResourceLocation backgroundLocation = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_BACKGROUND_TEXTURE);
-        ResourceLocation iconLocation = new ResourceLocation(TheBOMPluginMod.MODID, Resources.BOM_TAB_ICON_TEXTURE);
+        ResourceLocation backgroundLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_BACKGROUND_TEXTURE);
+        ResourceLocation iconLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_TAB_ICON_TEXTURE);
         background = guiHelper.createDrawable(backgroundLocation, 0, 0, 163, 119);
         icon = guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
         itemStackComparator = new ItemStackComparator();
@@ -79,7 +78,6 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
         // Sort by number of items in each stack
         baseIngredients.sort(itemStackComparator);
-//        baseIngredients.get(0).get(0).settool
 
         // Fill gui stacks
         guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));

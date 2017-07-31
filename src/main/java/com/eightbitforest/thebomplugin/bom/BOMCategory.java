@@ -47,12 +47,12 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
     @Override
     public String getTitle() {
-        return "Bill Of Materials";
+        return "Bill of Materials";
     }
 
     @Override
     public String getModName() {
-        return "The BOM Plugin";
+        return "TheBOMPlugin";
     }
 
     @Override

@@ -8,93 +8,20 @@ import java.util.*;
 
 public class BOMCalculator {
     private BOMCalculator() {}
-//<mezz> if that is what you are asking, you can call mezz.jei.api.IRecipeRegistry#getRecipeWrappers(IRecipeCategory<T>, IFocus<V>)
-//<mezz> * osum4est (~osumf@c-67-182-192-22.hsd1.ut.comcast.net) has joined
-//<mezz> <mezz> that will give you a list of recipes that  JEI knows of
-//<mezz> <mezz> you can get the IRecipeCategory for crafting by calling mezz.jei.api.IRecipeRegistry#getRecipeCategories(List<java.lang.String>)
-//<mezz> <mezz> you can create a focus with mezz.jei.api.IRecipeRegistry#createFocus
 
-//    nope, everything is stored per-category internally so it wouldn't be any more efficient. you can just make a helper method for it
-//<mezz> you *can* limit the categories by using mezz.jei.api.IRecipeRegistry#getRecipeCategories(IFocus<V>)
-//    <mezz> that way you only check the list of categories that actually contain the thing you're looking up
-
-    // Items that should not be crafted
+    // Basic items that don't need to be broken down
     private static ArrayList<String> baseItems = new ArrayList<>(Arrays.asList(
-            "^minecraft:grass$",
-            "^minecraft:dirt$",
-            "^minecraft:cobblestone$",
-            "^minecraft:sapling$",
-            "^minecraft:bedrock$",
-            "^minecraft:sand$",
-            "^minecraft:gravel$",
-            "^minecraft:.*_ore$",
-            "^minecraft:log$",
-            "^minecraft:log2$",
-            "^minecraft:leaves$",
-            "^minecraft:leaves2$",
-            "^minecraft:sponge$",
-            "^minecraft:web$",
-            "^minecraft:tallgrass$",
-            "^minecraft:deadbush$",
-            "^minecraft:.*_flower$",
-            "^minecraft:.*_mushroom$",
-            "^minecraft:mossy_cobblestone$",
-            "^minecraft:obsidian$",
-            "^minecraft:fire$",
-            "^minecraft:mob_spawner$",
-            "^minecraft:ice$",
-            "^minecraft:snow$",
-            "^minecraft:cactus$",
-            "^minecraft:clay$",
-            "^minecraft:pumpkin$",
-            "^minecraft:netherrack$",
-            "^minecraft:soul_sand$",
-            "^minecraft:glowstone$",
-            "^minecraft:vine$",
-            "^minecraft:mycelium$",
-            "^minecraft:waterlily$",
-            "^minecraft:end_stone$",
-            "^minecraft:dragon_egg$",
-            "^minecraft:cocoa$",
-            "^minecraft:apple$",
-            "^minecraft:coal$",
-            "^minecraft:string$",
-            "^minecraft:feather$",
-            "^minecraft:gunpowder$",
-            "^minecraft:wheat$",
-            "^minecraft:flint$",
-            "^minecraft:porkchop$",
-            "^minecraft:redstone$",
+            "^minecraft:stick$",
+            "^minecraft:torch$",
             "^minecraft:leather$",
-            "^minecraft:clay_ball$",
-            "^minecraft:reeds$",
-            "^minecraft:egg$",
-            "^minecraft:fish$",
-            "^minecraft:dye$",
-            "^minecraft:bone$",
-            "^minecraft:melon$",
-            "^minecraft:melon_seeds$",
-            "^minecraft:beef$",
-            "^minecraft:chicken$",
-            "^minecraft:rotten_flesh$",
-            "^minecraft:ender_pearl$",
-            "^minecraft:blaze_rod$",
-            "^minecraft:ghast_tear$",
-            "^minecraft:nether_wart$",
-            "^minecraft:spider_eye$",
-            "^minecraft:blaze_powder$",
-            "^minecraft:carrot$",
-            "^minecraft:potato$",
-            "^minecraft:map$",
-            "^minecraft:skull$",
-            "^minecraft:nether_star$",
-            "^minecraft:record_.*$"
-//            "^minecraft:diamond*$"
+            "^minecraft:paper$",
+            "^minecraft:wool$"
     ));
 
     // Items that should not be in a recipe
     private static List<ItemInfo> recipeItemBlacklist = new ArrayList<>(Arrays.asList(
             new ItemInfo("thermalfoundation:material", 1024), // Pyrotheum Dust, only processes ores
+            new ItemInfo("thermalfoundation:material", 1025), // Cryotheum Dust, produces base items
             new ItemInfo("thermalfoundation:material", 1027) // Petrotheum Dust, only processes ores
     ));
 

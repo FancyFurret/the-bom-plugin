@@ -74,10 +74,7 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
         }
 
         // Get base ingredients
-        List<List<ItemStack>> baseIngredients =
-                BOMCalculator.getBaseIngredients(
-                        ingredients.getInputs(ItemStack.class),
-                        ingredients.getOutputs(ItemStack.class).get(0));
+        List<List<ItemStack>> baseIngredients = BOMCalculator.getBaseIngredients(ingredients);
 
         // Sort by number of items in each stack
         baseIngredients.sort(itemStackComparator);

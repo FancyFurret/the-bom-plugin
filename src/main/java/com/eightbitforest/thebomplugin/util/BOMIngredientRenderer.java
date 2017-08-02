@@ -81,7 +81,7 @@ public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
         } else if (remainder == 0) {
             tip += stacks + reset + " stack(s)";
         } else {
-            tip += stacks + reset + " stacks(s) + " + style + remainder;
+            tip += stacks + reset + " stack(s) + " + style + remainder;
         }
 
         tip += reset;

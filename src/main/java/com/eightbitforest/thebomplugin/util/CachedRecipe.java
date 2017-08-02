@@ -2,8 +2,6 @@ package com.eightbitforest.thebomplugin.util;
 
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CachedRecipe {

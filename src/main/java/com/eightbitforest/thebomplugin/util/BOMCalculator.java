@@ -2,7 +2,6 @@ package com.eightbitforest.thebomplugin.util;
 
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import mezz.jei.api.ingredients.IIngredients;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
@@ -12,36 +11,58 @@ import java.util.List;
 public class BOMCalculator {
 
     private static List<CachedRecipe> cachedRecipes = new ArrayList<>();
+    private static List<CachedRecipe> finalCachedRecipes = new ArrayList<>();
 
     private BOMCalculator() {}
 
     public static List<List<ItemStack>> getBaseIngredients(IIngredients recipe) {
-        List<ItemStack> output = recipe.getOutputs(ItemStack.class).get(0);
+        try {
+            List<ItemStack> output = recipe.getOutputs(ItemStack.class).get(0);
 
-        List<List<ItemStack>> baseIngredients = new ArrayList<>();
-        List<List<ItemStack>> extraOutputs = new ArrayList<>();
+            List<List<ItemStack>> baseIngredients = new ArrayList<>();
+            List<List<ItemStack>> extraOutputs = new ArrayList<>();
 
-        CachedRecipe cachedRecipe = findCachedRecipe(output);
-        if (cachedRecipe != null) {
-            baseIngredients = cachedRecipe.getBaseIngredients();
-            utilizeExtraOutputs(baseIngredients, cachedRecipe.getExtraOutputs());
+            // See if we've already cached the final recipe
+            CachedRecipe finalCachedRecipe = findFinalCachedRecipe(output);
+            if (finalCachedRecipe != null) {
+                baseIngredients = finalCachedRecipe.getBaseIngredients();
+                return baseIngredients;
+            }
+
+            // See if we've already cached this recipe
+            CachedRecipe cachedRecipe = findCachedRecipe(output);
+            if (cachedRecipe != null) {
+                baseIngredients = cachedRecipe.getBaseIngredients();
+                utilizeExtraOutputs(baseIngredients, cachedRecipe.getExtraOutputs());
+                finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+                return baseIngredients;
+            }
+
+            // Calculate base materials for this recipe
+            for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
+                List<List<ItemStack>> seenItems = new ArrayList<>(Collections.singletonList(output));
+                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs));
+            }
+
+            cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+            utilizeExtraOutputs(baseIngredients, extraOutputs);
+            finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+
             return baseIngredients;
+        } catch (StackOverflowError e) {
+            System.out.println("TheBOMPlugin: ERROR. StackOverFlow while processing: " + recipe.getOutputs(ItemStack.class).get(0).get(0).getUnlocalizedName());
+            System.out.println("Recipe:");
+            for (List<ItemStack> ingredient : recipe.getInputs(ItemStack.class)) {
+                ingredient.get(0).getUnlocalizedName();
+            }
+            e.printStackTrace();
         }
 
-        List<List<ItemStack>> extraOutputsForCache = new ArrayList<>();
-
-        for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
-            List<List<ItemStack>> seenItems = new ArrayList<>(Collections.singletonList(output));
-            addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs, extraOutputsForCache));
-        }
-
-        cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
-        utilizeExtraOutputs(baseIngredients, extraOutputs);
-
-        return baseIngredients;
+        finalCachedRecipes.add(new CachedRecipe(recipe.getInputs(ItemStack.class), recipe.getOutputs(ItemStack.class).get(0), new ArrayList<>()));
+        return recipe.getInputs(ItemStack.class);
     }
 
-    private static List<List<ItemStack>> getBaseIngredientsForItem(List<ItemStack> stack, List<List<ItemStack>> seenItems, List<List<ItemStack>> extraOutputs, List<List<ItemStack>> extraOutputsForCache) {
+    private static List<List<ItemStack>> getBaseIngredientsForItem(List<ItemStack> stack, List<List<ItemStack>> seenItems, List<List<ItemStack>> extraOutputs) {
         List<List<ItemStack>> baseIngredients = new ArrayList<>();
 
         // Make sure stack isn't empty
@@ -56,11 +77,6 @@ public class BOMCalculator {
             addToIngredients(baseIngredients, cachedRecipe.getBaseIngredients());
             return baseIngredients;
         }
-
-        // See if we have an extra output for recipeItem
-//        if (checkForExtraItem(extraOutputs, stack)) {
-//            return baseIngredients;
-//        }
 
         // Don't recurse too much
         if (seenItems.size() > 512) {
@@ -109,7 +125,6 @@ public class BOMCalculator {
         //////////////////////
 
         List<List<ItemStack>> newExtraOutputs = new ArrayList<>();
-//        extraOutputs.clear();
 
         // See if we have extra outputs
         List<ItemStack> recipeOutput = chosenRecipe.getOutputs(ItemStack.class).get(0);
@@ -117,10 +132,7 @@ public class BOMCalculator {
             List<ItemStack> extraStack = new ArrayList<>(Collections.singletonList(recipeOutput.get(0).copy()));
             decreaseStackCount(extraStack);
             addToIngredients(newExtraOutputs, new ArrayList<>(Collections.singletonList(extraStack)));
-//            addToIngredients(extraOutputsForCache, new ArrayList<>(Collections.singletonList(extraStack)));
         }
-
-        List<List<ItemStack>> newExtraOutputsForCache = new ArrayList<>();
 
         // Add recipe components to ingredients
         for (List<ItemStack> recipeItem : chosenRecipe.getInputs(ItemStack.class)) {
@@ -128,83 +140,72 @@ public class BOMCalculator {
                 List<List<ItemStack>> newSeenItems = new ArrayList<>(seenItems);
 
                 newSeenItems.add(stack);
-                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems, newExtraOutputs, extraOutputsForCache));
+                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, newSeenItems, newExtraOutputs));
             }
         }
 
-//        utilizeExtraOutputs(baseIngredients, extraOutputs);
-//        if (recipeOutput.get(0).getCount() > 1) {
-//            List<ItemStack> copy = new ArrayList<>(recipeOutput.size());
-//            for (ItemStack originalStack : recipeOutput) {
-//                copy.add(originalStack.copy());
-//            }
-//            decreaseStackCount(copy);
-//            addToIngredients(newExtraOutputsForCache, Collections.singletonList(copy));
-//        }
 
         cachedRecipes.add(new CachedRecipe(baseIngredients, recipeOutput, newExtraOutputs));
-
         addToIngredients(extraOutputs, newExtraOutputs);
 
         return baseIngredients;
     }
 
     private static void utilizeExtraOutputs(List<List<ItemStack>> baseIngredients, List<List<ItemStack>> extraOutputs) {
-        for (List<ItemStack> extraOutput : extraOutputs) {
-            if (extraOutput.get(0).getCount() > 0) {
-
-//                CachedRecipe recipe = findCachedRecipe(extraOutput);
-//                if (recipe == null) {
-////                    System.out.println("ERROR: couldn't find error for extra output");
-//                    List<ItemStack> ingredient = findIngredientToDecrease(baseIngredients, extraOutput);
-//                    decreaseStackCount(ingredient);
-//                }
-//                else {
-//                    int numberOfExtras = extraOutput.get(0).getCount() / recipe.getOutput().get(0).getCount();
-//                    for (List<ItemStack> extraRecipeItem : recipe.getBaseIngredients()) {
-//                        utilizeExtraOutputs(baseIngredients, Collections.singletonList(extraRecipeItem));
-//                    }
-//                }
-                if (isBaseItem(extraOutput)) {
-                    for (int i = 0; i < extraOutput.get(0).getCount(); i++) {
-                        List<ItemStack> ingredient = findIngredientToDecrease(baseIngredients, extraOutput);
-                        decreaseStackCount(ingredient);
+        purgeAirFromExtraOutputs(extraOutputs);
+        List<List<ItemStack>> extraOutputsCopy = Utils.copyItemStackList(extraOutputs);
+        for (List<ItemStack> extraOutputCopy : extraOutputsCopy) {
+            List<ItemStack> extraOutput = findIngredientInList(extraOutputs, extraOutputCopy);
+            if (extraOutput != null) {
+                if (extraOutput.get(0).getCount() > 0) {
+                    if (isBaseItem(extraOutput)) {
+                        int numToDecrease = extraOutput.get(0).getCount();
+                        for (int i = 0; i < numToDecrease; i++) {
+                            List<ItemStack> ingredient = findIngredientInList(baseIngredients, extraOutput);
+                            decreaseStackCount(ingredient);
+                            decreaseStackCount(extraOutput);
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                List<IIngredients> recipes = Recipes.getRecipesForItemStack(extraOutput.get(0));
-                IIngredients extraOutputRecipe = pickBestRecipe(recipes);
-                if (extraOutputRecipe != null) {
-                    int numberOfExtras = extraOutput.get(0).getCount() / extraOutputRecipe.getOutputs(ItemStack.class).get(0).get(0).getCount();
-                    if (numberOfExtras > 0) {
-                        for (List<ItemStack> extraOutputRecipeItem : extraOutputRecipe.getInputs(ItemStack.class)) {
-                            if (extraOutputRecipeItem.size() > 0) {
-//                                if (!ignoreNumberOfExtraOutputs) {
-//                                    for (int i = 0; i < numberOfExtras; i++) {
-                                List<ItemStack> extraOutputRecipeItemCopy = Utils.copyItemStack(extraOutputRecipeItem);
-                                extraOutputRecipeItemCopy.forEach(stack -> stack.setCount(numberOfExtras));
-                                    utilizeExtraOutputs(baseIngredients, Collections.singletonList(extraOutputRecipeItemCopy));
-//                                    }
-//                                } else {
-//                                    utilizeExtraOutputs(baseIngredients, Collections.singletonList(extraOutputRecipeItem), false);
-//                                }
+                    List<IIngredients> recipes = Recipes.getRecipesForItemStack(extraOutput.get(0));
+                    IIngredients extraOutputRecipe = pickBestRecipe(recipes);
+                    if (extraOutputRecipe != null) {
+                        int numberOfExtras = extraOutput.get(0).getCount() / extraOutputRecipe.getOutputs(ItemStack.class).get(0).get(0).getCount();
+                        if (numberOfExtras > 0) {
+                            for (int i = 0; i < numberOfExtras * extraOutputRecipe.getOutputs(ItemStack.class).get(0).get(0).getCount(); i++)
+                                decreaseStackCount(extraOutput);
+
+                            for (List<ItemStack> extraOutputRecipeItem : extraOutputRecipe.getInputs(ItemStack.class)) {
+                                if (extraOutputRecipeItem.size() > 0) {
+                                    List<ItemStack> extraOutputRecipeItemCopy = Utils.copyItemStack(extraOutputRecipeItem);
+                                    extraOutputRecipeItemCopy.forEach(stack -> stack.setCount(numberOfExtras));
+
+                                    addToIngredients(extraOutputs, Collections.singletonList(extraOutputRecipeItemCopy));
+                                    utilizeExtraOutputs(baseIngredients, extraOutputs);
+                                }
                             }
                         }
-                    }
-                } else {
-                    for (int i = 0; i < extraOutput.get(0).getCount(); i++) {
-                        List<ItemStack> ingredient = findIngredientToDecrease(baseIngredients, extraOutput);
-                        decreaseStackCount(ingredient);
+                    } else {
+                        int numToDecrease = extraOutput.get(0).getCount();
+                        for (int i = 0; i < numToDecrease; i++) {
+                            List<ItemStack> ingredient = findIngredientInList(baseIngredients, extraOutput);
+                            decreaseStackCount(ingredient);
+                            decreaseStackCount(extraOutput);
+                        }
                     }
                 }
             }
         }
     }
 
-    private static List<ItemStack> findIngredientToDecrease(List<List<ItemStack>> ingredients, List<ItemStack> toFind) {
+    private static void purgeAirFromExtraOutputs(List<List<ItemStack>> extraOutputs) {
+        extraOutputs.removeIf(next -> next.size() == 0 || next.get(0).getCount() <= 0);
+    }
+
+    private static List<ItemStack> findIngredientInList(List<List<ItemStack>> ingredients, List<ItemStack> toFind) {
         for (List<ItemStack> ingredient : ingredients) {
-            if (areItemStacksEqualIgnoreSize(ingredient.get(0), toFind.get(0)) && ingredient.get(0).getCount() > 1) {
+            if (areItemStacksEqualIgnoreSize(ingredient.get(0), toFind.get(0)) && ingredient.get(0).getCount() > 0) {
                 return ingredient;
             }
         }
@@ -220,14 +221,13 @@ public class BOMCalculator {
         return null;
     }
 
-    private static boolean checkForExtraItem(List<List<ItemStack>> extraItems, List<ItemStack> recipeItem) {
-        for (List<ItemStack> extraItem : extraItems) {
-            if (areItemStacksEqualIgnoreSize(extraItem.get(0), recipeItem.get(0))) {
-                decreaseStackCount(extraItem);
-                return true;
+    private static CachedRecipe findFinalCachedRecipe(List<ItemStack> output) {
+        for (CachedRecipe cachedRecipe : finalCachedRecipes) {
+            if (areItemStacksEqualIgnoreSize(cachedRecipe.getOutput().get(0), output.get(0))) {
+                return cachedRecipe;
             }
         }
-        return false;
+        return null;
     }
 
     private static void decreaseStackCount(List<ItemStack> stack) {
@@ -247,11 +247,9 @@ public class BOMCalculator {
                 if (!validRecipe)
                     break;
 
-                for (String blacklistItem : TheBOMPluginMod.getInstance().getConfig().recipeItemBlacklist) {
-                    if (item.size() != 0 &&
-                            item.get(0).getItem().getRegistryName().toString().matches(blacklistItem)) {
+                if (item.size() != 0) {
+                    if (doesItemMatchConfigList(TheBOMPluginMod.getInstance().getConfig().recipeItemBlacklist, item.get(0))) {
                         validRecipe = false;
-                        break;
                     }
                 }
             }
@@ -262,11 +260,30 @@ public class BOMCalculator {
         return null;
     }
 
+    private static boolean doesItemMatchConfigList(String[] configList, ItemStack stack) {
+        for (String configItem : configList) {
+            String[] configParts = configItem.split("@");
+            if (stack.getItem().getRegistryName().toString().matches(configParts[0])) {
+                if (configParts.length == 2) {
+                    if (Integer.toString(stack.getItemDamage()).matches(configParts[1])) {
+                        return true;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static boolean isBlockRecipe(IIngredients recipe) {
         List<ItemStack> stack = null;
 
         // Make sure output gives 9
         if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9 &&
+                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 6 &&
                 recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 4) {
             return false;
         }
@@ -293,6 +310,7 @@ public class BOMCalculator {
 
         // Make sure there's 9 of the same item
         if (recipe.getInputs(ItemStack.class).size() != 9 &&
+                recipe.getInputs(ItemStack.class).size() != 6 &&
                 recipe.getInputs(ItemStack.class).size() != 4) {
             return false;
         }
@@ -314,11 +332,8 @@ public class BOMCalculator {
         if (item.size() > 1) // Is an ore dictionary item
             return true;
 
-        for (String regex : TheBOMPluginMod.getInstance().getConfig().baseItems)
-            if (item.get(0).getItem().getRegistryName().toString().matches(regex))
-                return true;
+        return doesItemMatchConfigList(TheBOMPluginMod.getInstance().getConfig().baseItems, item.get(0));
 
-        return false;
     }
 
     private static void addToIngredients(List<List<ItemStack>> ingredients, List<List<ItemStack>> ingredientsToAdd) {

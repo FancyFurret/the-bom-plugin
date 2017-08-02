@@ -3,7 +3,7 @@
   "modid": "thebomplugin",
   "name": "The BOM Plugin",
   "description": "A plugin for JEI that lists components needed to craft complex items and blocks.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "mcversion": "${mcversion}",
   "url": "http://github.com/osum4est/the-bom-plugin",
   "updateUrl": "",

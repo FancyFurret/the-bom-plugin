@@ -55,8 +55,8 @@ public class BOMConfig {
             "^minecraft:wool$",
             "^minecraft:planks$",
             "^minecraft:netherrack$",
-            "^actuallyadditions:item_crystal",
-            "^actuallyadditions:item_crystal_empowered"
+            "^actuallyadditions:item_crystal$",
+            "^actuallyadditions:item_crystal_empowered$"
     };
 
     // Items that should not be in a recipe

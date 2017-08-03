@@ -22,7 +22,6 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
     private final IDrawable background;
     private final IDrawable icon;
-    private final ItemStackComparator itemStackComparator;
     private final BOMIngredientRenderer ingredientRenderer;
 
     public BOMCategory(IGuiHelper guiHelper) {
@@ -30,7 +29,6 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
         ResourceLocation iconLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_TAB_ICON_TEXTURE);
         background = guiHelper.createDrawable(backgroundLocation, 0, 0, 163, 119);
         icon = guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
-        itemStackComparator = new ItemStackComparator();
         ingredientRenderer = new BOMIngredientRenderer();
     }
 
@@ -75,9 +73,6 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
         // Get base ingredients
         List<List<ItemStack>> baseIngredients = BOMCalculator.getBaseIngredients(ingredients);
-
-        // Sort by number of items in each stack
-        baseIngredients.sort(itemStackComparator);
 
         // Fill gui stacks
         guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));

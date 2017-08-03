@@ -68,6 +68,7 @@ public class BOMConfig {
             "^thermalfoundation:material$@1027", // TE dusts
             "^thermalfoundation:material$@1028", // TE dusts
             "^mysticalagriculture:.*_essence$", // MA essences
-            "^techreborn:uumatter$"
+            "^techreborn:uumatter$",
+            "^mysticalagradditions:stuff$" // TODO: add to old versions
     };
 }

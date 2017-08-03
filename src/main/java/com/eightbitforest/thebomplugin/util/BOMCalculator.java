@@ -3,15 +3,19 @@ package com.eightbitforest.thebomplugin.util;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class BOMCalculator {
 
     private static List<CachedRecipe> cachedRecipes = new ArrayList<>();
     private static List<CachedRecipe> finalCachedRecipes = new ArrayList<>();
+    private static final ItemStackComparator itemStackComparator = new ItemStackComparator();
 
     private BOMCalculator() {}
 
@@ -46,6 +50,10 @@ public class BOMCalculator {
 
             cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
             utilizeExtraOutputs(baseIngredients, extraOutputs);
+
+            // Sort by number of items in each stack
+            baseIngredients.sort(itemStackComparator);
+
             finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
 
             return baseIngredients;

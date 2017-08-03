@@ -2,6 +2,7 @@ package com.eightbitforest.thebomplugin.util;
 
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
+import com.eightbitforest.thebomplugin.gui.GuiHelpers;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -10,11 +11,14 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
 
     private static final String style =
@@ -47,21 +51,9 @@ public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
     }
 
     private void drawItemAmount(FontRenderer fontRenderer, String amount, int x, int y) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x + (16 * (1 - fontScale)), y + (16 * (1 - fontScale)), 1);
-        GL11.glScalef(fontScale, fontScale, 1);
-
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        GlStateManager.disableBlend();
-
-        fontRenderer.drawStringWithShadow(amount, 17 - fontRenderer.getStringWidth(amount), 9, 16777215);
-
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.enableBlend();
-
-        GlStateManager.popMatrix();
+        x = (int)(x + (16 * (1 - fontScale)));
+        y = (int)(y + (16 * (1 - fontScale)));
+        GuiHelpers.drawSmallString(fontRenderer, x, y, amount, fontScale, true);
     }
 
     @Override

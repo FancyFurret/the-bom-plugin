@@ -11,12 +11,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
-public class BOMGuiEventHandler {
+public class BOMEventHandler {
 
     private ItemListGui gui;
     private Minecraft minecraft;
 
-    public BOMGuiEventHandler(Minecraft minecraft) {
+    public BOMEventHandler(Minecraft minecraft) {
         this.minecraft = minecraft;
         this.gui = new ItemListGui(minecraft);
     }

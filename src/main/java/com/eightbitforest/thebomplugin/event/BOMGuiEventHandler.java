@@ -1,5 +1,6 @@
 package com.eightbitforest.thebomplugin.event;
 
+import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.gui.ItemListGui;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.MouseEvent;
@@ -34,7 +35,7 @@ public class BOMGuiEventHandler {
 
     @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
-        if (Keyboard.isKeyDown(Keyboard.KEY_LMENU) && event.getDwheel() != 0) {
+        if (TheBOMPluginMod.getInstance().getScrollModifierKeybind().isKeyDown() && event.getDwheel() != 0) {
             gui.onScroll(event.getDwheel() > 0 ? 1 : -1);
             event.setCanceled(true);
         }

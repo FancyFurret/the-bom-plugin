@@ -23,10 +23,18 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     private final IDrawable icon;
     private final BOMIngredientRenderer ingredientRenderer;
 
+    private List<List<ItemStack>> baseIngredients;
+    private IIngredients recipe;
+    private int outputAmount;
+
+    private IGuiItemStackGroup guiItemStacks;
+
     public BOMCategory(IGuiHelper guiHelper) {
         background = TheBOMPlugin.getInstance().getGuiDrawables().getCategoryBackground();
         icon = TheBOMPlugin.getInstance().getGuiDrawables().getCategoryIcon();
         ingredientRenderer = new BOMIngredientRenderer();
+
+        outputAmount = 1;
     }
 
     @Nullable
@@ -57,7 +65,9 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
 
     @Override
     public void setRecipe(IRecipeLayout iRecipeLayout, BOMWrapper bomWrapper, IIngredients ingredients) {
-        IGuiItemStackGroup guiItemStacks = iRecipeLayout.getItemStacks();
+        guiItemStacks = iRecipeLayout.getItemStacks();
+        outputAmount = 1;
+        recipe = ingredients;
 
         // Init gui stacks, 0 being the output
         guiItemStacks.init(0, false, 72, 91);
@@ -68,13 +78,42 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
             }
         }
 
+        fillGuiItemStacks();
+
+        bomWrapper.fixDecreaseButton();
+    }
+
+    private void fillGuiItemStacks() {
+        ItemStack output = recipe.getOutputs(ItemStack.class).get(0).get(0).copy();
+        output.setCount(output.getCount() * outputAmount);
+
         // Get base ingredients
-        List<List<ItemStack>> baseIngredients = BOMCalculator.getBaseIngredients(ingredients);
+        baseIngredients = BOMCalculator.getBaseIngredients(recipe, outputAmount);
 
         // Fill gui stacks
-        guiItemStacks.set(0, ingredients.getOutputs(ItemStack.class).get(0));
-        for (int i = 0; i < baseIngredients.size(); i++) {
+        guiItemStacks.set(0, output);
+        for (int i = 0; i < Math.min(baseIngredients.size(), 6 * 9); i++) {
             guiItemStacks.set(i + 1, baseIngredients.get(i));
         }
+    }
+
+    public void increaseOutput() {
+        outputAmount++;
+        fillGuiItemStacks();
+    }
+
+    public void decreaseOutput() {
+        if (outputAmount > 1) {
+            outputAmount--;
+            fillGuiItemStacks();
+        }
+    }
+
+    public int getOutputAmount() {
+        return outputAmount;
+    }
+
+    public List<List<ItemStack>> getBaseIngredients() {
+        return baseIngredients;
     }
 }

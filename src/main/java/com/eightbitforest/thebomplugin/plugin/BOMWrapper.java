@@ -32,6 +32,7 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
         this.hudListButton = new GuiButton(0, 109, 90, 55, 20, "Track");
         this.increaseOutputButton = new GuiIconButton(1, 95, 90, 10, 20, TheBOMPlugin.getInstance().getGuiDrawables().getArrowNext());
         this.decreaseOutputButton = new GuiIconButton(2, 57, 90, 10, 20, TheBOMPlugin.getInstance().getGuiDrawables().getArrowPrevious());
+        fixDecreaseButton();
     }
 
     @Override
@@ -49,8 +50,8 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
             hudListButton.displayString = "Track";
         }
         hudListButton.drawButton(minecraft, mouseX, mouseY, 1f);
-        increaseOutputButton.drawButton(minecraft, mouseX, mouseY, 2f);
-        decreaseOutputButton.drawButton(minecraft, mouseX, mouseY, 3f);
+        increaseOutputButton.drawButton(minecraft, mouseX, mouseY, 1f);
+        decreaseOutputButton.drawButton(minecraft, mouseX, mouseY, 1f);
     }
 
     @Override
@@ -63,19 +64,38 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
             else {
                 Ingredients i = new Ingredients();
                 getIngredients(i);
-                ItemListGui.showItems(BOMCalculator.getBaseIngredients(i));
+                ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }
             return true;
         }
         if (increaseOutputButton.mousePressed(minecraft, mouseX, mouseY)) {
             increaseOutputButton.playPressSound(minecraft.getSoundHandler());
+            TheBOMPlugin.getInstance().getCategory().increaseOutput();
+            if (ItemListGui.isGuiOpen()) {
+                ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
+            }
+            fixDecreaseButton();
             return true;
         }
         if (decreaseOutputButton.mousePressed(minecraft, mouseX, mouseY)) {
             decreaseOutputButton.playPressSound(minecraft.getSoundHandler());
+            TheBOMPlugin.getInstance().getCategory().decreaseOutput();
+            if (ItemListGui.isGuiOpen()) {
+                ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
+            }
+            fixDecreaseButton();
             return true;
         }
 
         return false;
+    }
+
+    public void fixDecreaseButton() {
+        if (TheBOMPlugin.getInstance().getCategory().getOutputAmount() <= 1) {
+            decreaseOutputButton.enabled = false;
+        }
+        else {
+            decreaseOutputButton.enabled = true;
+        }
     }
 }

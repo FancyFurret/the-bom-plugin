@@ -59,8 +59,7 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
         height = scaled.getScaledHeight();
         textScale = TheBOMPluginMod.getInstance().getConfig().textScale;
 
-        guiBackground = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_INGAME_GUI_TEXTURE);
-        guiBackground = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_INGAME_GUI_TEXTURE);
+        guiBackground = Constants.BOM_INGAME_GUI;
 
         baseItems = new ArrayList<>();
     }
@@ -88,25 +87,14 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
 
         for (int i = 0; i < Math.min(baseItems.size(), 9); i++) {
             ItemListGuiItemStack stack = baseItems.get(i + topItem);
-//            GL11.glPushMatrix();
-//            GL11.glTranslatef(0, 0, -100);
+
             int x = textureOffsetX;
             int y = textureOffsetY + baseY + i * 16 + (i * 1);
+
             if (stack.doesInventoryHaveEnough())
                 RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack(), "✔", 0x83f442, .5f);
             else
                 RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack());
-//            GL11.glPopMatrix();
-
-//            GL11.glPushMatrix();
-//            GL11.glTranslatef(0, 0, 100);
-//            if (baseItems.get(i).doesInventoryHaveEnough()) {
-//                textureManager.bindTexture(guiBackground);
-//                x = textureOffsetX;
-//                y = textureOffsetX + ((height / 2) - (164 / 2)) + i * 16 + (i * 2);
-//                drawTexturedModalRect(x, y, checkmarkX, checkmarkY, checkmarkWidth, checkmarkHeight);
-//            }
-//            GL11.glPopMatrix();
         }
     }
 

@@ -2,6 +2,7 @@ package com.eightbitforest.thebomplugin.render;
 
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.gui.util.GuiHelpers;
+import com.eightbitforest.thebomplugin.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,8 +43,20 @@ public class RenderUtils {
     }
 
     private static void drawItemAmount(FontRenderer fontRenderer, String amount, int x, int y, int color, float fontScale) {
+        try {
+            int amountNumber = Integer.parseInt(amount);
+            amount = shortenAmount(amount, amountNumber);
+        } catch (NumberFormatException ignored) {}
+
         x = (int)(x + (16 * (1 - fontScale)));
         y = (int)(y + (16 * (1 - fontScale)));
         GuiHelpers.drawSmallString(fontRenderer, x, y, amount, fontScale, true, color);
+    }
+
+    private static String shortenAmount(String amount, int amountNumber) {
+        if (amount.length() <= 5) {
+            return amount;
+        }
+        return Utils.formatLong(amountNumber);
     }
 }

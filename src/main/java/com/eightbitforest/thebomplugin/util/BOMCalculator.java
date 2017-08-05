@@ -22,32 +22,40 @@ public class BOMCalculator {
     private BOMCalculator() {}
 
     public static List<List<ItemStack>> getBaseIngredients(IIngredients recipe) {
+        return getBaseIngredients(recipe, 1);
+    }
+
+    public static List<List<ItemStack>> getBaseIngredients(IIngredients recipe, int outputAmount) {
         try {
             List<ItemStack> output = recipe.getOutputs(ItemStack.class).get(0);
 
             List<List<ItemStack>> baseIngredients = new ArrayList<>();
             List<List<ItemStack>> extraOutputs = new ArrayList<>();
 
-            // See if we've already cached the final recipe
-            CachedRecipe finalCachedRecipe = findFinalCachedRecipe(output);
-            if (finalCachedRecipe != null) {
-                baseIngredients = finalCachedRecipe.getBaseIngredients();
-                return baseIngredients;
-            }
+            if (outputAmount == 1) {
+                // See if we've already cached the final recipe
+                CachedRecipe finalCachedRecipe = findFinalCachedRecipe(output);
+                if (finalCachedRecipe != null) {
+                    baseIngredients = finalCachedRecipe.getBaseIngredients();
+                    return baseIngredients;
+                }
 
-            // See if we've already cached this recipe
-            CachedRecipe cachedRecipe = findCachedRecipe(output);
-            if (cachedRecipe != null) {
-                baseIngredients = cachedRecipe.getBaseIngredients();
-                utilizeExtraOutputs(baseIngredients, cachedRecipe.getExtraOutputs());
-                finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
-                return baseIngredients;
+                // See if we've already cached this recipe
+                CachedRecipe cachedRecipe = findCachedRecipe(output);
+                if (cachedRecipe != null) {
+                    baseIngredients = cachedRecipe.getBaseIngredients();
+                    utilizeExtraOutputs(baseIngredients, cachedRecipe.getExtraOutputs());
+                    finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+                    return baseIngredients;
+                }
             }
 
             // Calculate base materials for this recipe
             for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
-                List<List<ItemStack>> seenItems = new ArrayList<>(Collections.singletonList(output));
-                addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs));
+                for (int i = 0; i < outputAmount; i++) {
+                    List<List<ItemStack>> seenItems = new ArrayList<>(Collections.singletonList(output));
+                    addToIngredients(baseIngredients, getBaseIngredientsForItem(recipeItem, seenItems, extraOutputs));
+                }
             }
 
             cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));

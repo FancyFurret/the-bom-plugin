@@ -4,6 +4,7 @@ import com.eightbitforest.thebomplugin.gui.util.GuiDrawables;
 import com.eightbitforest.thebomplugin.plugin.BOMCategory;
 import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
 import com.eightbitforest.thebomplugin.plugin.BOMWrapper;
+import com.eightbitforest.thebomplugin.util.BOMCalculator;
 import com.eightbitforest.thebomplugin.util.Recipes;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
@@ -19,12 +20,18 @@ public class TheBOMPlugin implements IModPlugin
 
     private static TheBOMPlugin instance;
 
+    private BOMCategory category;
+
     private IJeiRuntime runtime;
     private IIngredientRegistry ingredientRegistry;
     private GuiDrawables guiDrawables;
 
     public static TheBOMPlugin getInstance() {
         return instance;
+    }
+
+    public BOMCategory getCategory() {
+        return category;
     }
 
     public IJeiRuntime getRuntime() {
@@ -46,7 +53,7 @@ public class TheBOMPlugin implements IModPlugin
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         guiDrawables = new GuiDrawables(registry.getJeiHelpers());
-        registry.addRecipeCategories(new BOMCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(category = new BOMCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override

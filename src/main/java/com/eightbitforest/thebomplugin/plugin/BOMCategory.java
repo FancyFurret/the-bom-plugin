@@ -24,10 +24,8 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     private final BOMIngredientRenderer ingredientRenderer;
 
     public BOMCategory(IGuiHelper guiHelper) {
-        ResourceLocation backgroundLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_BACKGROUND_TEXTURE);
-        ResourceLocation iconLocation = new ResourceLocation(TheBOMPluginMod.MODID, Constants.BOM_TAB_ICON_TEXTURE);
-        background = guiHelper.createDrawable(backgroundLocation, 0, 0, 163, 119);
-        icon = guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
+        background = TheBOMPlugin.getInstance().getGuiDrawables().getCategoryBackground();
+        icon = TheBOMPlugin.getInstance().getGuiDrawables().getCategoryIcon();
         ingredientRenderer = new BOMIngredientRenderer();
     }
 

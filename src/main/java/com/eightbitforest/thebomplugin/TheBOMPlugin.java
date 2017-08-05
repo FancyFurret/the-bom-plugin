@@ -1,5 +1,6 @@
 package com.eightbitforest.thebomplugin;
 
+import com.eightbitforest.thebomplugin.gui.util.GuiDrawables;
 import com.eightbitforest.thebomplugin.plugin.BOMCategory;
 import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
 import com.eightbitforest.thebomplugin.plugin.BOMWrapper;
@@ -20,7 +21,7 @@ public class TheBOMPlugin implements IModPlugin
 
     private IJeiRuntime runtime;
     private IIngredientRegistry ingredientRegistry;
-
+    private GuiDrawables guiDrawables;
 
     public static TheBOMPlugin getInstance() {
         return instance;
@@ -34,12 +35,17 @@ public class TheBOMPlugin implements IModPlugin
         return ingredientRegistry;
     }
 
+    public GuiDrawables getGuiDrawables() {
+        return guiDrawables;
+    }
+
     public TheBOMPlugin(){
         instance = this;
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
+        guiDrawables = new GuiDrawables(registry.getJeiHelpers());
         registry.addRecipeCategories(new BOMCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 

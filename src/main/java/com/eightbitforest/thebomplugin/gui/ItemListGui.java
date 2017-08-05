@@ -86,7 +86,7 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
             drawTexturedModalRect(scrollBarStartX, baseY + scrollBarStartY + scrollBarOffset, scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight);
         }
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < Math.min(baseItems.size(), 9); i++) {
             ItemListGuiItemStack stack = baseItems.get(i + topItem);
 //            GL11.glPushMatrix();
 //            GL11.glTranslatef(0, 0, -100);
@@ -127,6 +127,9 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
 
         if (items.size() > 9) {
             instance.isScrollbarShown = true;
+        }
+        else {
+            instance.isScrollbarShown = false;
         }
     }
 

@@ -1,4 +1,4 @@
-package com.eightbitforest.thebomplugin.bom;
+package com.eightbitforest.thebomplugin.plugin;
 
 import com.eightbitforest.thebomplugin.jei.ingredients.Ingredients;
 import com.eightbitforest.thebomplugin.util.BOMCalculator;
@@ -19,11 +19,13 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     private BOMRecipe recipe;
     private IJeiHelpers jeiHelpers;
     private GuiButton hudListButton;
+    private GuiButton closeHudListButton;
 
     public BOMWrapper(BOMRecipe recipe, IJeiHelpers helpers) {
         this.recipe = recipe;
         this.jeiHelpers = helpers;
         this.hudListButton = new GuiButton(0, 110, 90, 45, 20, "Track");
+        this.closeHudListButton = new GuiButton(1, 0, 90, 55, 20, "Untrack");
     }
 
     @Override
@@ -35,12 +37,13 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         hudListButton.drawButton(minecraft, mouseX, mouseY, 1f);
+        closeHudListButton.drawButton(minecraft, mouseX, mouseY, 1f);
     }
 
     @Override
     public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         if (hudListButton.mousePressed(minecraft, mouseX, mouseY)) {
-            hudListButton.playPressSound(minecraft.getSoundHandler());
+//            hudListButton.playPressSound(minecraft.getSoundHandler());
             Ingredients i = new Ingredients();
             getIngredients(i);
             ItemListGui.showItems(BOMCalculator.getBaseIngredients(i));

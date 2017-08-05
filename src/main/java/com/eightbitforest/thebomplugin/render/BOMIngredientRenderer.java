@@ -1,19 +1,12 @@
-package com.eightbitforest.thebomplugin.util;
+package com.eightbitforest.thebomplugin.render;
 
-import com.eightbitforest.thebomplugin.TheBOMPlugin;
-import com.eightbitforest.thebomplugin.TheBOMPluginMod;
-import com.eightbitforest.thebomplugin.gui.GuiHelpers;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -25,35 +18,13 @@ public class BOMIngredientRenderer implements IIngredientRenderer<ItemStack> {
             TextFormatting.DARK_AQUA.toString();
     private static final String reset =
             TextFormatting.RESET.toString();
-    private static float fontScale = -1f;
 
     public BOMIngredientRenderer() {
     }
 
     @Override
-    public void render(Minecraft minecraft, int x, int y, @Nullable ItemStack itemStack) {
-        if (itemStack != null) {
-
-            if (fontScale == -1f) {
-                fontScale = TheBOMPluginMod.getInstance().getConfig().textScale;
-            }
-
-            RenderHelper.enableGUIStandardItemLighting();
-            FontRenderer fontRenderer = getFontRenderer(minecraft, itemStack);
-
-            minecraft.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
-            minecraft.getRenderItem().renderItemOverlayIntoGUI(fontRenderer, itemStack, x, y, "");
-            drawItemAmount(fontRenderer, Integer.toString(itemStack.getCount()), x, y);
-
-            GlStateManager.disableBlend();
-            RenderHelper.disableStandardItemLighting();
-        }
-    }
-
-    private void drawItemAmount(FontRenderer fontRenderer, String amount, int x, int y) {
-        x = (int)(x + (16 * (1 - fontScale)));
-        y = (int)(y + (16 * (1 - fontScale)));
-        GuiHelpers.drawSmallString(fontRenderer, x, y, amount, fontScale, true);
+    public void render(Minecraft minecraft, int x, int y, @Nullable ItemStack ingredient) {
+        RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, ingredient);
     }
 
     @Override

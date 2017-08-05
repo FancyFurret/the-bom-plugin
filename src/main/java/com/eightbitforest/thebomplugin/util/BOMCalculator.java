@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.eightbitforest.thebomplugin.util.Utils.areItemStacksEqualIgnoreSize;
+
 @SideOnly(Side.CLIENT)
 public class BOMCalculator {
 
@@ -367,22 +369,5 @@ public class BOMCalculator {
         stacks.add(stackToAddCopy);
     }
 
-    private static boolean areItemStacksEqualIgnoreSize(ItemStack stackA, ItemStack stackB) {
-        if (stackA.isEmpty() && stackB.isEmpty()) {
-            return true;
-        } else {
-            if (!stackA.isEmpty() && !stackB.isEmpty()){
-                if (stackA.getItem() != stackB.getItem()) {
-                    return false;
-                } else if (stackA.getItemDamage() != stackB.getItemDamage()) {
-                    return false;
-                } else {
-                    return ItemStack.areItemStackTagsEqual(stackA, stackB) && stackA.areCapsCompatible(stackB);
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    }
+
 }

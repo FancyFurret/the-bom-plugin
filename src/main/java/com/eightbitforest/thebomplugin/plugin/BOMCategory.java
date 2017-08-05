@@ -1,10 +1,9 @@
-package com.eightbitforest.thebomplugin.bom;
+package com.eightbitforest.thebomplugin.plugin;
 
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.TheBOMPluginMod;
 import com.eightbitforest.thebomplugin.util.BOMCalculator;
-import com.eightbitforest.thebomplugin.util.BOMIngredientRenderer;
-import com.eightbitforest.thebomplugin.util.ItemStackComparator;
+import com.eightbitforest.thebomplugin.render.BOMIngredientRenderer;
 import com.eightbitforest.thebomplugin.util.Constants;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;

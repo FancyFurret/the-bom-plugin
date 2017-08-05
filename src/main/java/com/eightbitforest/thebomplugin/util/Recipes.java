@@ -1,7 +1,7 @@
 package com.eightbitforest.thebomplugin.util;
 
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
-import com.eightbitforest.thebomplugin.bom.BOMRecipe;
+import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.ingredients.IIngredients;

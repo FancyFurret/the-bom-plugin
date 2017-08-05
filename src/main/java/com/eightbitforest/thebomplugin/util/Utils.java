@@ -21,4 +21,27 @@ public class Utils {
         }
         return stackListCopy;
     }
+
+    public static boolean areItemStacksEqualIgnoreSize(ItemStack stackA, ItemStack stackB) {
+        if (stackA.isEmpty() && stackB.isEmpty()) {
+            return true;
+        } else {
+            if (!stackA.isEmpty() && !stackB.isEmpty()){
+                if (stackA.getItem() != stackB.getItem()) {
+                    return false;
+                } else if (stackA.getItemDamage() != stackB.getItemDamage()) {
+                    return false;
+                } else {
+                    return ItemStack.areItemStackTagsEqual(stackA, stackB) && stackA.areCapsCompatible(stackB);
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    }
+
+    public static int clamp(int n, int min, int max) {
+        return Math.max(min, Math.min(max, n));
+    }
 }

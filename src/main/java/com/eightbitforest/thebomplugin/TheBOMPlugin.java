@@ -1,9 +1,8 @@
 package com.eightbitforest.thebomplugin;
 
-import com.eightbitforest.thebomplugin.bom.BOMCategory;
-import com.eightbitforest.thebomplugin.bom.BOMRecipe;
-import com.eightbitforest.thebomplugin.bom.BOMWrapper;
-import com.eightbitforest.thebomplugin.util.BOMConfig;
+import com.eightbitforest.thebomplugin.plugin.BOMCategory;
+import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
+import com.eightbitforest.thebomplugin.plugin.BOMWrapper;
 import com.eightbitforest.thebomplugin.util.Recipes;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;

@@ -46,6 +46,7 @@ public class BOMConfig {
         }
     }
 
+    // TODO: Changes
     // Basic items that don't need to be broken down
     private static String[] baseItemsDefault = new String[]{
             "^minecraft:stick$",
@@ -56,7 +57,9 @@ public class BOMConfig {
             "^minecraft:planks$",
             "^minecraft:netherrack$",
             "^actuallyadditions:item_crystal$",
-            "^actuallyadditions:item_crystal_empowered$"
+            "^actuallyadditions:item_crystal_empowered$",
+
+            "^minecraft:dye$"
     };
 
     // Items that should not be in a recipe

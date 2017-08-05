@@ -11,7 +11,7 @@ public class Constants {
     public static final String BOM_TAB_ICON_TEXTURE = "textures/gui/tabicon.png";
     public static final ResourceLocation BOM_ICON = new ResourceLocation(TheBOMPluginMod.MODID, BOM_TAB_ICON_TEXTURE);
 
-    public static final String BOM_INGAME_GUI_TEXTURE = "textures/gui/ingamegui_dark.png";
+    public static final String BOM_INGAME_GUI_TEXTURE = "textures/gui/ingamegui.png";
     public static final ResourceLocation BOM_INGAME_GUI = new ResourceLocation(TheBOMPluginMod.MODID, BOM_INGAME_GUI_TEXTURE);
 
     public static final String BOM_KEYBIND_CATEGORY = "key.categories.thebomplugin";

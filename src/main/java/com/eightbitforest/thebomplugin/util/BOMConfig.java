@@ -47,6 +47,7 @@ public class BOMConfig {
     }
 
     // TODO: Changes
+    // Machine casing block that gives 8 iron
     // Basic items that don't need to be broken down
     private static String[] baseItemsDefault = new String[]{
             "^minecraft:stick$",
@@ -59,7 +60,8 @@ public class BOMConfig {
             "^actuallyadditions:item_crystal$",
             "^actuallyadditions:item_crystal_empowered$",
 
-            "^minecraft:dye$"
+            "^minecraft:dye$",
+            "^minecraft:flint$"
     };
 
     // Items that should not be in a recipe
@@ -72,6 +74,8 @@ public class BOMConfig {
             "^thermalfoundation:material$@1028", // TE dusts
             "^mysticalagriculture:.*_essence$", // MA essences
             "^techreborn:uumatter$",
-            "^mysticalagradditions:stuff$" // TODO: add to old versions
+
+            "^mysticalagradditions:stuff$",
+            "^ic2:crafting$@38" // Industrial credits TODO: add to old versions
     };
 }

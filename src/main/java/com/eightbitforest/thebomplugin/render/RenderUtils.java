@@ -43,10 +43,14 @@ public class RenderUtils {
     }
 
     private static void drawItemAmount(FontRenderer fontRenderer, String amount, int x, int y, int color, float fontScale) {
-        try {
-            int amountNumber = Integer.parseInt(amount);
-            amount = shortenAmount(amount, amountNumber);
-        } catch (NumberFormatException ignored) {}
+        if (amount.length() > 5) {
+            try {
+                int amountNumber = Integer.parseInt(amount);
+                amount = shortenAmount(amount, amountNumber);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
 
         x = (int)(x + (16 * (1 - fontScale)));
         y = (int)(y + (16 * (1 - fontScale)));
@@ -54,9 +58,7 @@ public class RenderUtils {
     }
 
     private static String shortenAmount(String amount, int amountNumber) {
-        if (amount.length() <= 5) {
-            return amount;
-        }
+
         return Utils.formatLong(amountNumber);
     }
 }

@@ -300,11 +300,11 @@ public class BOMCalculator {
         List<ItemStack> stack = null;
 
         // Make sure output gives 9
-        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9 &&
-                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 6 &&
-                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 4) {
-            return false;
-        }
+//        if (recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 9 &&
+//                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 6 &&
+//                recipe.getOutputs(ItemStack.class).get(0).get(0).getCount() != 4) {
+//            return false;
+//        }
 
         // Make sure there's only one input
         for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
@@ -327,11 +327,11 @@ public class BOMCalculator {
         }
 
         // Make sure there's 9 of the same item
-        if (recipe.getInputs(ItemStack.class).size() != 9 &&
-                recipe.getInputs(ItemStack.class).size() != 6 &&
-                recipe.getInputs(ItemStack.class).size() != 4) {
-            return false;
-        }
+//        if (recipe.getInputs(ItemStack.class).size() != 9 &&
+//                recipe.getInputs(ItemStack.class).size() != 6 &&
+//                recipe.getInputs(ItemStack.class).size() != 4) {
+//            return false;
+//        }
         for (List<ItemStack> recipeItem : recipe.getInputs(ItemStack.class)) {
             if (recipeItem.size() == 0) {
                 return false;

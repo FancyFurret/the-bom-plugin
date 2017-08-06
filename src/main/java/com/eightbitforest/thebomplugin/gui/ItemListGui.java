@@ -92,9 +92,15 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
             int y = textureOffsetY + baseY + i * 16 + (i * 1);
 
             if (stack.doesInventoryHaveEnough())
-                RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack(), "\u2714", 0x83f442, .5f);
-            else
-                RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack());
+                RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack(), "\u2714", 0x83f442, textScale);
+            else {
+                if (TheBOMPluginMod.getInstance().getConfig().showRemainingItemsInTracker) {
+                    RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack(), Integer.toString(stack.getRemainingNeeded()), 16777215, textScale);
+                }
+                else {
+                    RenderUtils.renderItemStackWithSmallFont(minecraft, x, y, stack.getCurrentStack());
+                }
+            }
         }
     }
 

@@ -68,4 +68,13 @@ public class Utils {
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
+
+    public static <T> boolean arrayContains(T[] array, T item) {
+        for (T arrayItem : array) {
+            if (arrayItem.equals(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

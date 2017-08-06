@@ -17,13 +17,15 @@ public class BOMConfig {
 
     private static final String GUI = "gui";
     public float textScale;
+    public boolean showRemainingItemsInTracker;
 
     private static final String GENERAL = "general";
-    public String[] baseItems;
-    public String[] recipeItemBlacklist;
+
+    public List<String> baseItems;
+    public List<String> recipeItemBlacklist;
 
     public BOMConfig(File configFile) {
-        config = new Configuration(configFile);
+        config = new Configuration(configFile, "0.2.0");
         MinecraftForge.EVENT_BUS.register(this);
         loadConfig();
     }
@@ -37,11 +39,32 @@ public class BOMConfig {
 
     private void loadConfig() {
         textScale = config.getFloat("textScale", GUI, .5f, 0f, 1f, "A float between 0 and 1 that scales the font size used to display item amounts");
+        showRemainingItemsInTracker = config.getBoolean("showRemainingItemsInTracker", GUI, true, "True will make the GUI tracker show how many more items you need. False will show the total amount needed");
 
-        baseItems = config.getStringList("baseItems", GENERAL, baseItemsDefault, "(Regex) Items that will not be broken down into their components. You may add an @ symbol at the end followed by a damage value to target an item with that specific damage value");
-        recipeItemBlacklist = config.getStringList("recipeItemBlacklist", GENERAL, recipeItemBlacklistDefault, "(Regex) Recipes containing these items will not be used. You may add an @ symbol at the end followed by a damage value to target an item with that specific damage value");
+        baseItems = new ArrayList<>(Arrays.asList(config.getStringList("baseItems", GENERAL, baseItemsDefault, "(Regex) Items that will not be broken down into their components. You may add an @ symbol at the end followed by a damage value to target an item with that specific damage value")));
+        recipeItemBlacklist = new ArrayList<>(Arrays.asList(config.getStringList("recipeItemBlacklist", GENERAL, recipeItemBlacklistDefault, "(Regex) Recipes containing these items will not be used. You may add an @ symbol at the end followed by a damage value to target an item with that specific damage value")));
 
-        if (config.hasChanged()) {
+        // Update with missing default // TODO: Don't re-add things users have removed
+        String loadedVersion = config.getLoadedConfigVersion();
+        if (loadedVersion == null || !loadedVersion.equals(config.getDefinedConfigVersion())) {
+            for (String defaultItem : baseItemsDefault) {
+                if (!baseItems.contains(defaultItem)) {
+                    baseItems.add(defaultItem);
+                }
+            }
+            for (String defaultItem : recipeItemBlacklistDefault) {
+                if (!recipeItemBlacklist.contains(defaultItem)) {
+                    recipeItemBlacklist.add(defaultItem);
+                }
+            }
+            // Save new config items
+            String[] newBaseItems = baseItems.toArray(new String[baseItems.size()]);
+            config.get(GENERAL, "baseItems", newBaseItems).set(newBaseItems);
+            String[] newRecipeItemBlacklist = recipeItemBlacklist.toArray(new String[recipeItemBlacklist.size()]);
+            config.get(GENERAL, "recipeItemBlacklist", newRecipeItemBlacklist).set(newRecipeItemBlacklist);
+        }
+
+        if (config.hasChanged() || loadedVersion == null || !loadedVersion.equals(config.getDefinedConfigVersion())) {
             config.save();
         }
     }
@@ -60,8 +83,11 @@ public class BOMConfig {
             "^actuallyadditions:item_crystal$",
             "^actuallyadditions:item_crystal_empowered$",
 
+            // Added in 0.2.0
             "^minecraft:dye$",
-            "^minecraft:flint$"
+            "^minecraft:flint$",
+            "^minecraft:obsidian$",
+            "^minecraft:.*_bucket$"
     };
 
     // Items that should not be in a recipe
@@ -75,7 +101,8 @@ public class BOMConfig {
             "^mysticalagriculture:.*_essence$", // MA essences
             "^techreborn:uumatter$",
 
+            // Added in 0.2.0
             "^mysticalagradditions:stuff$",
-            "^ic2:crafting$@38" // Industrial credits TODO: add to old versions
+            "^ic2:crafting$@38" // Industrial credits
     };
 }

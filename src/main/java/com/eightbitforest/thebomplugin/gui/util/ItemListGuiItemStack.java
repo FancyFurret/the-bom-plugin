@@ -24,6 +24,10 @@ public class ItemListGuiItemStack {
         return inventoryAmount >= stack.getCurrentStack().getCount();
     }
 
+    public int getRemainingNeeded() {
+        return stack.getCurrentStack().getCount() - inventoryAmount;
+    }
+
     public void setInventoryAmount(IInventory inventory) {
         inventoryAmount = 0;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {

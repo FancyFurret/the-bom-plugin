@@ -20,7 +20,7 @@ import org.lwjgl.input.Keyboard;
 @Mod(modid = TheBOMPluginMod.MODID, version = TheBOMPluginMod.VERSION, dependencies = "required-after:jei", clientSideOnly = true)
 public class TheBOMPluginMod {
     public static final String MODID = "thebomplugin";
-    public static final String VERSION = "0.1.2";
+    public static final String VERSION = "0.2.0";
 
     private static TheBOMPluginMod instance;
 

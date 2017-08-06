@@ -278,7 +278,7 @@ public class BOMCalculator {
         return null;
     }
 
-    private static boolean doesItemMatchConfigList(String[] configList, ItemStack stack) {
+    private static boolean doesItemMatchConfigList(List<String> configList, ItemStack stack) {
         for (String configItem : configList) {
             String[] configParts = configItem.split("@");
             if (stack.getItem().getRegistryName().toString().matches(configParts[0])) {

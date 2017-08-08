@@ -107,12 +107,15 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
     public static void dismissItems() {
         instance.isGuiOpen = false;
         instance.baseItems.clear();
+        TheBOMPluginMod.getInstance().getInventoryChangedEvent().disable();
     }
 
     public static void showItems(List<List<ItemStack>> items) {
         instance.isGuiOpen = true;
         instance.baseItems.clear();
         instance.topItem = 0;
+
+        TheBOMPluginMod.getInstance().getInventoryChangedEvent().enable();
 
         for (List<ItemStack> item : items)
             instance.baseItems.add(new ItemListGuiItemStack(item));

@@ -35,10 +35,13 @@ public class TheBOMPluginMod {
     }
 
     private BOMInventoryChangedEvent inventoryChangedEvent;
+    public BOMInventoryChangedEvent getInventoryChangedEvent() {
+        return inventoryChangedEvent;
+    }
+
     private BOMEventHandler guiEventHandler;
 
     private KeyBinding scrollModifierKeybind;
-
     public KeyBinding getScrollModifierKeybind() {
         return scrollModifierKeybind;
     }
@@ -56,13 +59,15 @@ public class TheBOMPluginMod {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        inventoryChangedEvent = new BOMInventoryChangedEvent();
+
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         guiEventHandler = new BOMEventHandler(Minecraft.getMinecraft());
         MinecraftForge.EVENT_BUS.register(guiEventHandler);
+        inventoryChangedEvent = new BOMInventoryChangedEvent();
+        MinecraftForge.EVENT_BUS.register(inventoryChangedEvent);
         inventoryChangedEvent.registerInventoryChangedEventListener(guiEventHandler.getItemListGui());
     }
 }

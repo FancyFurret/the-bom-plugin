@@ -87,7 +87,11 @@ public class BOMConfig {
             "^minecraft:dye$",
             "^minecraft:flint$",
             "^minecraft:obsidian$",
-            "^minecraft:.*_bucket$"
+            "^minecraft:.*_bucket$",
+
+            // 0.2.1
+            "^minecraft:wool",
+	        "^minecraft:glowstone_dust",
     };
 
     // Items that should not be in a recipe

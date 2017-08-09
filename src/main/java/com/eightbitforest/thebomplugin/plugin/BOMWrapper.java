@@ -3,14 +3,13 @@ package com.eightbitforest.thebomplugin.plugin;
 import com.eightbitforest.thebomplugin.TheBOMPlugin;
 import com.eightbitforest.thebomplugin.gui.button.GuiIconButton;
 import com.eightbitforest.thebomplugin.jei.ingredients.Ingredients;
-import com.eightbitforest.thebomplugin.util.BOMCalculator;
 import com.eightbitforest.thebomplugin.gui.ItemListGui;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.item.Item;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,13 +25,19 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     private GuiButton increaseOutputButton;
     private GuiButton decreaseOutputButton;
 
+    private String trackString;
+    private String untrackString;
+
     public BOMWrapper(BOMRecipe recipe, IJeiHelpers helpers) {
         this.recipe = recipe;
         this.jeiHelpers = helpers;
-        this.hudListButton = new GuiButton(0, 109, 90, 55, 20, "Track");
+        this.hudListButton = new GuiButton(0, 109, 90, 55, 20, "");
         this.increaseOutputButton = new GuiIconButton(1, 95, 90, 10, 20, TheBOMPlugin.getInstance().getGuiDrawables().getArrowNext());
         this.decreaseOutputButton = new GuiIconButton(2, 57, 90, 10, 20, TheBOMPlugin.getInstance().getGuiDrawables().getArrowPrevious());
-        fixDecreaseButton();
+        updateDecreaseButton();
+
+        trackString = I18n.format("button.track.name");
+        untrackString = I18n.format("button.untrack.name");
     }
 
     @Override
@@ -44,10 +49,10 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         if (ItemListGui.isGuiOpen()) {
-            hudListButton.displayString = "Untrack";
+            hudListButton.displayString = untrackString;
         }
         else {
-            hudListButton.displayString = "Track";
+            hudListButton.displayString = trackString;
         }
         hudListButton.drawButton(minecraft, mouseX, mouseY, 1f);
         increaseOutputButton.drawButton(minecraft, mouseX, mouseY, 1f);
@@ -74,7 +79,7 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
             if (ItemListGui.isGuiOpen()) {
                 ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }
-            fixDecreaseButton();
+            updateDecreaseButton();
             return true;
         }
         if (decreaseOutputButton.mousePressed(minecraft, mouseX, mouseY)) {
@@ -83,14 +88,14 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
             if (ItemListGui.isGuiOpen()) {
                 ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }
-            fixDecreaseButton();
+            updateDecreaseButton();
             return true;
         }
 
         return false;
     }
 
-    public void fixDecreaseButton() {
+    public void updateDecreaseButton() {
         if (TheBOMPlugin.getInstance().getCategory().getOutputAmount() <= 1) {
             decreaseOutputButton.enabled = false;
         }

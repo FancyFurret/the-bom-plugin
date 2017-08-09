@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.eightbitforest.thebomplugin.util.Utils.areItemStackListsEqualIgnoreSize;
 import static com.eightbitforest.thebomplugin.util.Utils.areItemStacksEqualIgnoreSize;
 
 @SideOnly(Side.CLIENT)
@@ -34,18 +35,9 @@ public class BOMCalculator {
 
             if (outputAmount == 1) {
                 // See if we've already cached the final recipe
-                CachedRecipe finalCachedRecipe = findFinalCachedRecipe(output);
+                CachedRecipe finalCachedRecipe = findFinalCachedRecipe(recipe);
                 if (finalCachedRecipe != null) {
                     baseIngredients = finalCachedRecipe.getBaseIngredients();
-                    return baseIngredients;
-                }
-
-                // See if we've already cached this recipe
-                CachedRecipe cachedRecipe = findCachedRecipe(output);
-                if (cachedRecipe != null) {
-                    baseIngredients = cachedRecipe.getBaseIngredients();
-                    utilizeExtraOutputs(baseIngredients, cachedRecipe.getExtraOutputs());
-                    finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
                     return baseIngredients;
                 }
             }
@@ -58,13 +50,13 @@ public class BOMCalculator {
                 }
             }
 
-            cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+            cachedRecipes.add(new CachedRecipe(recipe, baseIngredients, output, extraOutputs));
             utilizeExtraOutputs(baseIngredients, extraOutputs);
 
             // Sort by number of items in each stack
             baseIngredients.sort(itemStackComparator);
 
-            finalCachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
+            finalCachedRecipes.add(new CachedRecipe(recipe, baseIngredients, output, extraOutputs));
 
             return baseIngredients;
         } catch (StackOverflowError e) {
@@ -76,7 +68,8 @@ public class BOMCalculator {
             e.printStackTrace();
         }
 
-        finalCachedRecipes.add(new CachedRecipe(recipe.getInputs(ItemStack.class), recipe.getOutputs(ItemStack.class).get(0), new ArrayList<>()));
+        // Cache the broken recipe
+        finalCachedRecipes.add(new CachedRecipe(recipe, recipe.getInputs(ItemStack.class), recipe.getOutputs(ItemStack.class).get(0), new ArrayList<>()));
         return recipe.getInputs(ItemStack.class);
     }
 
@@ -239,10 +232,15 @@ public class BOMCalculator {
         return null;
     }
 
-    private static CachedRecipe findFinalCachedRecipe(List<ItemStack> output) {
+    private static CachedRecipe findFinalCachedRecipe(IIngredients recipe) {
+        List<ItemStack> output = recipe.getOutputs(ItemStack.class).get(0);
+        List<List<ItemStack>> inputs = recipe.getInputs(ItemStack.class);
         for (CachedRecipe cachedRecipe : finalCachedRecipes) {
+            List<List<ItemStack>> cachedInputs = cachedRecipe.getInputs().getInputs(ItemStack.class);
             if (areItemStacksEqualIgnoreSize(cachedRecipe.getOutput().get(0), output.get(0))) {
-                return cachedRecipe;
+                if (areItemStackListsEqualIgnoreSize(cachedInputs, inputs)) {
+                    return cachedRecipe;
+                }
             }
         }
         return null;

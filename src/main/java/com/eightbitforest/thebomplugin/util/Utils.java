@@ -40,6 +40,23 @@ public class Utils {
         }
     }
 
+    public static boolean areItemStackListsEqualIgnoreSize(List<List<ItemStack>> stackA, List<List<ItemStack>> stackB) {
+        if (stackA.size() != stackB.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < stackA.size(); i++) {
+            if (stackA.get(i).size() == 0 || stackB.size() == 0) {
+                return false;
+            }
+            if (!areItemStacksEqualIgnoreSize(stackA.get(i).get(0), stackB.get(i).get(0))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static int clamp(int n, int min, int max) {
         return Math.max(min, Math.min(max, n));
     }

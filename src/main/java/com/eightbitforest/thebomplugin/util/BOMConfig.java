@@ -92,6 +92,8 @@ public class BOMConfig {
             // 0.2.1
             "^minecraft:wool",
 	        "^minecraft:glowstone_dust",
+            "^minecraft:.*_bottle",
+            "^minecraft:elytra"
     };
 
     // Items that should not be in a recipe

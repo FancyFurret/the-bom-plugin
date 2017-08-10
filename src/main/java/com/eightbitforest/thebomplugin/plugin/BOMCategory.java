@@ -24,6 +24,8 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     private IIngredients recipe;
     private int outputAmount;
 
+    private ItemStack output;
+
     private IGuiItemStackGroup guiItemStacks;
 
     public BOMCategory(IGuiHelper guiHelper) {
@@ -81,7 +83,8 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
     }
 
     private void fillGuiItemStacks() {
-        ItemStack output = recipe.getOutputs(ItemStack.class).get(0).get(0).copy();
+        this.output = recipe.getOutputs(ItemStack.class).get(0).get(0);
+        ItemStack output = this.output.copy();
         output.setCount(output.getCount() * outputAmount);
 
         // Get base ingredients
@@ -94,14 +97,31 @@ public class BOMCategory implements IRecipeCategory<BOMWrapper> {
         }
     }
 
-    public void increaseOutput() {
-        outputAmount++;
+    public void increaseOutput(boolean byStack) {
+        if (byStack) {
+            int stackAmount = output.getMaxStackSize() / output.getCount();
+            outputAmount += stackAmount;
+            outputAmount = stackAmount * Math.round((float)(outputAmount) / stackAmount);
+        }
+        else {
+            outputAmount++;
+        }
         fillGuiItemStacks();
     }
 
-    public void decreaseOutput() {
+    public void decreaseOutput(boolean byStack) {
         if (outputAmount > 1) {
-            outputAmount--;
+            if (byStack) {
+                int stackAmount = output.getMaxStackSize() / output.getCount();
+                outputAmount -= stackAmount;
+                outputAmount = stackAmount * Math.round((float)(outputAmount) / stackAmount);
+                if (outputAmount <= 0) {
+                    outputAmount = 1;
+                }
+            }
+            else {
+                outputAmount--;
+            }
             fillGuiItemStacks();
         }
     }

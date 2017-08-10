@@ -13,6 +13,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 
 @SideOnly(Side.CLIENT)
@@ -75,7 +76,7 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
         }
         if (increaseOutputButton.mousePressed(minecraft, mouseX, mouseY)) {
             increaseOutputButton.playPressSound(minecraft.getSoundHandler());
-            TheBOMPlugin.getInstance().getCategory().increaseOutput();
+            TheBOMPlugin.getInstance().getCategory().increaseOutput(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
             if (ItemListGui.isGuiOpen()) {
                 ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }
@@ -84,7 +85,7 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
         }
         if (decreaseOutputButton.mousePressed(minecraft, mouseX, mouseY)) {
             decreaseOutputButton.playPressSound(minecraft.getSoundHandler());
-            TheBOMPlugin.getInstance().getCategory().decreaseOutput();
+            TheBOMPlugin.getInstance().getCategory().decreaseOutput(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT));
             if (ItemListGui.isGuiOpen()) {
                 ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }

@@ -50,7 +50,7 @@ public class BOMCalculator {
                 }
             }
 
-            cachedRecipes.add(new CachedRecipe(recipe, baseIngredients, output, extraOutputs));
+            cachedRecipes.add(new CachedRecipe(baseIngredients, output, extraOutputs));
             utilizeExtraOutputs(baseIngredients, extraOutputs);
 
             // Sort by number of items in each stack
@@ -81,6 +81,12 @@ public class BOMCalculator {
             return baseIngredients;
         }
 
+        // Make sure this item isn't a base item
+        if (isBaseItem(stack)) {
+            addItemStack(baseIngredients, stack);
+            return baseIngredients;
+        }
+
         // See if we've cached this recipe
         CachedRecipe cachedRecipe = findCachedRecipe(stack);
         if (cachedRecipe != null) {
@@ -101,12 +107,6 @@ public class BOMCalculator {
                 addItemStack(baseIngredients, stack);
                 return baseIngredients;
             }
-        }
-
-        // Make sure this item isn't a base item
-        if (isBaseItem(stack)) {
-            addItemStack(baseIngredients, stack);
-            return baseIngredients;
         }
 
         // Get matching recipes

@@ -25,7 +25,7 @@ public class BOMConfig {
     public List<String> recipeItemBlacklist;
 
     public BOMConfig(File configFile) {
-        config = new Configuration(configFile, "0.2.0");
+        config = new Configuration(configFile, "0.2.1");
         MinecraftForge.EVENT_BUS.register(this);
         loadConfig();
     }
@@ -90,10 +90,20 @@ public class BOMConfig {
             "^minecraft:.*_bucket$",
 
             // 0.2.1
-            "^minecraft:wool",
-	        "^minecraft:glowstone_dust",
-            "^minecraft:.*_bottle",
-            "^minecraft:elytra"
+            "^minecraft:wool$",
+	        "^minecraft:glowstone_dust$",
+            "^minecraft:.*_bottle$",
+            "^minecraft:elytra$",
+            "^minecraft:string$",
+            "^minecraft:string$",
+            "^harvestcraft:cuttingboarditem$",
+            "^harvestcraft:potitem",
+            "^harvestcraft:skilletitem",
+            "^harvestcraft:saucepanitem",
+            "^harvestcraft:bakewareitem",
+            "^harvestcraft:mortarandpestleitem",
+            "^harvestcraft:mixingbowlitem",
+            "^harvestcraft:juiceritem",
     };
 
     // Items that should not be in a recipe

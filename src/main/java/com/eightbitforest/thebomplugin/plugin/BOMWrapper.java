@@ -6,6 +6,7 @@ import com.eightbitforest.thebomplugin.jei.ingredients.Ingredients;
 import com.eightbitforest.thebomplugin.gui.ItemListGui;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -43,16 +44,15 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputLists(ItemStack.class, recipe.inputs);
-        ingredients.setOutput(ItemStack.class, recipe.output);
+        ingredients.setInputLists(VanillaTypes.ITEM, recipe.inputs);
+        ingredients.setOutput(VanillaTypes.ITEM, recipe.output);
     }
 
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         if (ItemListGui.isGuiOpen()) {
             hudListButton.displayString = untrackString;
-        }
-        else {
+        } else {
             hudListButton.displayString = trackString;
         }
         hudListButton.drawButton(minecraft, mouseX, mouseY, 1f);
@@ -66,10 +66,9 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
             hudListButton.playPressSound(minecraft.getSoundHandler());
             if (ItemListGui.isGuiOpen()) {
                 ItemListGui.dismissItems();
-            }
-            else {
-                Ingredients i = new Ingredients();
-                getIngredients(i);
+            } else {
+//                Ingredients i = new Ingredients();
+//                getIngredients(i);
                 ItemListGui.showItems(TheBOMPlugin.getInstance().getCategory().getBaseIngredients());
             }
             return true;
@@ -99,8 +98,7 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     public void updateDecreaseButton() {
         if (TheBOMPlugin.getInstance().getCategory().getOutputAmount() <= 1) {
             decreaseOutputButton.enabled = false;
-        }
-        else {
+        } else {
             decreaseOutputButton.enabled = true;
         }
     }

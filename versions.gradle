@@ -1,0 +1,9 @@
+ext {
+    mod_version = "0.2.3"
+
+    mc_version = "1.12.2"
+    forge_version = "14.23.5.2768"
+    mappings = "snapshot_20171003"
+
+    jei_version = "4.15.0.268"
+}

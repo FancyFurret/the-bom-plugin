@@ -16,7 +16,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-
 @SideOnly(Side.CLIENT)
 public class BOMWrapper implements ICraftingRecipeWrapper {
 
@@ -96,10 +95,6 @@ public class BOMWrapper implements ICraftingRecipeWrapper {
     }
 
     public void updateDecreaseButton() {
-        if (TheBOMPlugin.getInstance().getCategory().getOutputAmount() <= 1) {
-            decreaseOutputButton.enabled = false;
-        } else {
-            decreaseOutputButton.enabled = true;
-        }
+        decreaseOutputButton.enabled = TheBOMPlugin.getInstance().getCategory().getOutputAmount() > 1;
     }
 }

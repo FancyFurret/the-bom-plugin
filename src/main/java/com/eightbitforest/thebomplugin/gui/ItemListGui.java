@@ -122,12 +122,7 @@ public class ItemListGui extends Gui implements IInventoryChangedEventListener {
 
         instance.onInventoryChanged(instance.minecraft.player.inventory);
 
-        if (items.size() > 9) {
-            instance.isScrollbarShown = true;
-        }
-        else {
-            instance.isScrollbarShown = false;
-        }
+        instance.isScrollbarShown = items.size() > 9;
     }
 
     @Override

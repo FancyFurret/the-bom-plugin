@@ -13,7 +13,6 @@ import java.util.List;
 import static com.eightbitforest.thebomplugin.util.Utils.areItemStackListsEqualIgnoreSize;
 import static com.eightbitforest.thebomplugin.util.Utils.areItemStacksEqualIgnoreSize;
 
-@SideOnly(Side.CLIENT)
 public class BOMCalculator {
 
     private static List<CachedRecipe> cachedRecipes = new ArrayList<>();

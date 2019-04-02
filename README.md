@@ -1,4 +1,4 @@
-[![](http://cf.way2muchnoise.eu/full_273404_downloads.svg)](http://minecraft.curseforge.com/projects/thebomplugin) [![](http://cf.way2muchnoise.eu/versions/Minecraft_273404_all.svg)](http://minecraft.curseforge.com/projects/thebomplugin)
+[![](http://cf.way2muchnoise.eu/full_thebomplugin_downloads.svg)](http://minecraft.curseforge.com/projects/thebomplugin) [![](http://cf.way2muchnoise.eu/versions/thebomplugin.svg)](http://minecraft.curseforge.com/projects/thebomplugin)
 
 # [TheBOMPlugin](http://minecraft.curseforge.com/projects/thebomplugin/files)
 This mod adds a new tab to JEI's recipe screen that shows the item you are trying to make, broken down into all the components needed to craft it.

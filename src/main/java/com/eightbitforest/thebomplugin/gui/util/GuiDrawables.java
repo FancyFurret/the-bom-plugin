@@ -14,10 +14,13 @@ public class GuiDrawables {
 
     public GuiDrawables(IJeiHelpers jeiHelpers) {
         categoryBackground = jeiHelpers.getGuiHelper().createDrawable(Constants.BOM_BACKGROUND, 0, 0, 163, 119);
-        categoryIcon = jeiHelpers.getGuiHelper().createDrawable(Constants.BOM_ICON, 0, 0, 16, 16, 16, 16);
+        categoryIcon = jeiHelpers.getGuiHelper().drawableBuilder(Constants.BOM_ICON, 0, 0, 16, 16)
+                .setTextureSize(16, 16).build();
 
-        arrowNext = jeiHelpers.getGuiHelper().createDrawable(Constants.JEI_RECIPE_BACKGROUND, 204, 55, 5, 8, 1, 0, 1, 0);
-        arrowPrevious = jeiHelpers.getGuiHelper().createDrawable(Constants.JEI_RECIPE_BACKGROUND, 196, 55, 5, 8, 1, 0, 1, 0);
+        arrowNext = jeiHelpers.getGuiHelper().drawableBuilder(Constants.BOM_ARROW_NEXT, 0, 0, 9, 9)
+                .setTextureSize(9, 9).trim(0, 0, 1, 1).build();
+        arrowPrevious = jeiHelpers.getGuiHelper().drawableBuilder(Constants.BOM_ARROW_PREV, 0, 0, 9, 9)
+                .setTextureSize(9, 9).trim(0, 0, 1, 1).build();
     }
 
     public IDrawable getCategoryBackground() {

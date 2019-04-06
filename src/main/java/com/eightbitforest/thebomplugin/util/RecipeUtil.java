@@ -1,25 +1,27 @@
 package com.eightbitforest.thebomplugin.util;
 
-import com.eightbitforest.thebomplugin.TheBOMPlugin;
-import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
+import com.eightbitforest.thebomplugin.jei.BOMJeiPlugin;
+import com.eightbitforest.thebomplugin.jei.BOMRecipe;
 import mezz.jei.api.IJeiHelpers;
-import mezz.jei.api.IJeiRuntime;
+import mezz.jei.api.IRecipeRegistry;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import com.eightbitforest.thebomplugin.jei.ingredients.Ingredients;
+import mezz.jei.ingredients.Ingredients;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public final class Recipes {
-    private Recipes() {
+public class RecipeUtil {
+    private RecipeUtil() {
     }
 
-    public static List<BOMRecipe> getValidRecipes(final IJeiHelpers jeiHelpers) {
+    public static List<BOMRecipe> getValidRecipes(IJeiHelpers jeiHelpers) {
         Iterator<IRecipe> recipeIterator = CraftingManager.REGISTRY.iterator();
         List<BOMRecipe> validRecipes = new ArrayList<>();
         while (recipeIterator.hasNext()) {
@@ -29,11 +31,13 @@ public final class Recipes {
         return validRecipes;
     }
 
-    @SuppressWarnings("unchecked")
     public static List<IIngredients> getRecipesForItemStack(ItemStack stackIn) {
-        IJeiRuntime runtime = TheBOMPlugin.getInstance().getRuntime();
-        List<IRecipeWrapper> wrappers = runtime.getRecipeRegistry().getRecipeWrappers(runtime.getRecipeRegistry().getRecipeCategories().get(0),
-                runtime.getRecipeRegistry().createFocus(IFocus.Mode.OUTPUT, stackIn));
+        IRecipeRegistry registry = BOMJeiPlugin.getInstance().getRuntime().getRecipeRegistry();
+
+        //noinspection unchecked
+        IRecipeCategory<IRecipeWrapper> craftingCategory = registry.getRecipeCategories().get(0);
+        List<IRecipeWrapper> wrappers = registry.getRecipeWrappers(craftingCategory,
+                registry.createFocus(IFocus.Mode.OUTPUT, stackIn));
 
         List<IIngredients> recipes = new ArrayList<>();
         for (IRecipeWrapper wrapper : wrappers) {

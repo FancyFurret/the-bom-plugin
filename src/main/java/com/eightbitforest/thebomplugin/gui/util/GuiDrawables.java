@@ -1,11 +1,10 @@
 package com.eightbitforest.thebomplugin.gui.util;
 
-import com.eightbitforest.thebomplugin.util.Constants;
+import com.eightbitforest.thebomplugin.config.Constants;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.gui.IDrawable;
 
 public class GuiDrawables {
-
     private final IDrawable categoryBackground;
     private final IDrawable categoryIcon;
 
@@ -13,7 +12,8 @@ public class GuiDrawables {
     private final IDrawable arrowPrevious;
 
     public GuiDrawables(IJeiHelpers jeiHelpers) {
-        categoryBackground = jeiHelpers.getGuiHelper().createDrawable(Constants.BOM_BACKGROUND, 0, 0, 163, 119);
+        categoryBackground = jeiHelpers.getGuiHelper()
+                .createDrawable(Constants.BOM_BACKGROUND, 0, 0, 163, 119);
         categoryIcon = jeiHelpers.getGuiHelper().drawableBuilder(Constants.BOM_ICON, 0, 0, 16, 16)
                 .setTextureSize(16, 16).build();
 

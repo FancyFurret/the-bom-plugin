@@ -2,9 +2,15 @@ package com.eightbitforest.thebomplugin.util;
 
 import net.minecraft.item.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-public class Utils {
+public class ItemStackUtil {
+    private ItemStackUtil(){
+
+    }
+
     public static List<List<ItemStack>> copyItemStackList(List<List<ItemStack>> list) {
         List<List<ItemStack>> itemStackListCopy = new ArrayList<>();
         for (List<ItemStack> stackList : list) {
@@ -57,41 +63,16 @@ public class Utils {
         return true;
     }
 
-    public static int clamp(int n, int min, int max) {
-        return Math.max(min, Math.min(max, n));
-    }
-
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-    static {
-        suffixes.put(1_000L, "k");
-        suffixes.put(1_000_000L, "M");
-        suffixes.put(1_000_000_000L, "G");
-        suffixes.put(1_000_000_000_000L, "T");
-        suffixes.put(1_000_000_000_000_000L, "P");
-        suffixes.put(1_000_000_000_000_000_000L, "E");
-    }
-
-    public static String formatLong(long value) {
-        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
-        if (value == Long.MIN_VALUE) return formatLong(Long.MIN_VALUE + 1);
-        if (value < 0) return "-" + formatLong(-value);
-        if (value < 1000) return Long.toString(value); //deal with easy case
-
-        Map.Entry<Long, String> e = suffixes.floorEntry(value);
-        Long divideBy = e.getKey();
-        String suffix = e.getValue();
-
-        long truncated = value / (divideBy / 10); //the number part of the output times 10
-        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
-        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
-    }
-
-    public static <T> boolean arrayContains(T[] array, T item) {
-        for (T arrayItem : array) {
-            if (arrayItem.equals(item)) {
-                return true;
-            }
+    public static class ItemStackComparator implements Comparator<List<ItemStack>>{
+        @Override
+        public int compare(List<ItemStack> o1, List<ItemStack> o2) {
+            return o2.get(0).getCount() - o1.get(0).getCount();
         }
-        return false;
+
+        @Override
+        public boolean equals(Object obj) {
+            return false;
+        }
+
     }
 }

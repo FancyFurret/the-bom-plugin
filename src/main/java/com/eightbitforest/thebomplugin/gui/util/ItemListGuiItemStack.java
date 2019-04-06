@@ -1,19 +1,17 @@
 package com.eightbitforest.thebomplugin.gui.util;
 
-import com.eightbitforest.thebomplugin.util.Utils;
+import com.eightbitforest.thebomplugin.util.ItemStackUtil;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ItemListGuiItemStack {
-
-    private ItemStackRotatationTimer stack;
+    private ItemStackRotationTimer stack;
     private int inventoryAmount = 0;
 
     public ItemListGuiItemStack(List<ItemStack> items) {
-        this.stack = new ItemStackRotatationTimer(items);
+        this.stack = new ItemStackRotationTimer(items);
     }
 
     public ItemStack getCurrentStack() {
@@ -33,12 +31,11 @@ public class ItemListGuiItemStack {
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack inventoryStack = inventory.getStackInSlot(i);
             for (ItemStack itemStack : stack.getAllItems()) {
-                if (Utils.areItemStacksEqualIgnoreSize(itemStack, inventoryStack)) {
+                if (ItemStackUtil.areItemStacksEqualIgnoreSize(itemStack, inventoryStack)) {
                     inventoryAmount += inventoryStack.getCount();
                     break;
                 }
             }
         }
     }
-
 }

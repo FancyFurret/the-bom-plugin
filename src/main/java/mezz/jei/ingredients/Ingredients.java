@@ -1,6 +1,6 @@
-package com.eightbitforest.thebomplugin.jei.ingredients;
+package mezz.jei.ingredients;
 
-import com.eightbitforest.thebomplugin.TheBOMPlugin;
+import com.eightbitforest.thebomplugin.jei.BOMJeiPlugin;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.IIngredients;
@@ -25,14 +25,14 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setInput(Class<? extends T> ingredientClass, T input) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setInput(ingredientType, input);
     }
 
     @Override
     public <T> void setInputLists(IIngredientType<T> ingredientType, List<List<T>> inputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientHelper<T> ingredientHelper = ingredientRegistry.getIngredientHelper(ingredientType);
         List<List> expandedInputs = new ArrayList<>();
         for (List<T> input : inputs) {
@@ -46,14 +46,14 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setInputLists(Class<? extends T> ingredientClass, List<List<T>> inputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setInputLists(ingredientType, inputs);
     }
 
     @Override
     public <T> void setInputs(IIngredientType<T> ingredientType, List<T> inputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientHelper<T> ingredientHelper = ingredientRegistry.getIngredientHelper(ingredientType);
         List<List> expandedInputs = new ArrayList<>();
         for (T input : inputs) {
@@ -66,7 +66,7 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setInputs(Class<? extends T> ingredientClass, List<T> input) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setInputs(ingredientType, input);
     }
@@ -79,14 +79,14 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setOutput(Class<? extends T> ingredientClass, T output) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setOutput(ingredientType, output);
     }
 
     @Override
     public <T> void setOutputs(IIngredientType<T> ingredientType, List<T> outputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientHelper<T> ingredientHelper = ingredientRegistry.getIngredientHelper(ingredientType);
         List<List> expandedOutputs = new ArrayList<>();
         for (T output : outputs) {
@@ -100,14 +100,14 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setOutputs(Class<? extends T> ingredientClass, List<T> outputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setOutputs(ingredientType, outputs);
     }
 
     @Override
     public <T> void setOutputLists(IIngredientType<T> ingredientType, List<List<T>> outputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientHelper<T> ingredientHelper = ingredientRegistry.getIngredientHelper(ingredientType);
         List<List> expandedOutputs = new ArrayList<>();
         for (List<T> output : outputs) {
@@ -121,7 +121,7 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> void setOutputLists(Class<? extends T> ingredientClass, List<List<T>> outputs) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         setOutputLists(ingredientType, outputs);
     }
@@ -139,7 +139,7 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> List<List<T>> getInputs(Class<? extends T> ingredientClass) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         return getInputs(ingredientType);
     }
@@ -157,7 +157,7 @@ public class Ingredients implements IIngredients {
     @Override
     @Deprecated
     public <T> List<List<T>> getOutputs(Class<? extends T> ingredientClass) {
-        IIngredientRegistry ingredientRegistry = TheBOMPlugin.getInstance().getIngredientRegistry();
+        IIngredientRegistry ingredientRegistry = BOMJeiPlugin.getInstance().getIngredientRegistry();
         IIngredientType<T> ingredientType = ingredientRegistry.getIngredientType(ingredientClass);
         return getOutputs(ingredientType);
     }

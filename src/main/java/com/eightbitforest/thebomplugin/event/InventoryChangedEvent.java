@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class BOMInventoryChangedEvent {
+public class InventoryChangedEvent {
     private List<IInventoryChangedEventListener> inventoryChangedEventListeners;
 
     private boolean enable = false;
     private int timesChanged = -1;
 
-    public BOMInventoryChangedEvent() {
+    public InventoryChangedEvent() {
         inventoryChangedEventListeners = new ArrayList<>();
     }
 

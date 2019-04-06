@@ -1,70 +1,46 @@
 package com.eightbitforest.thebomplugin;
 
-import com.eightbitforest.thebomplugin.gui.util.GuiDrawables;
-import com.eightbitforest.thebomplugin.plugin.BOMCategory;
-import com.eightbitforest.thebomplugin.plugin.BOMRecipe;
-import com.eightbitforest.thebomplugin.plugin.BOMWrapper;
-import com.eightbitforest.thebomplugin.util.BOMCalculator;
-import com.eightbitforest.thebomplugin.util.Recipes;
-import mezz.jei.api.IJeiRuntime;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.JEIPlugin;
-import mezz.jei.api.ingredients.IIngredientRegistry;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import com.eightbitforest.thebomplugin.event.BOMEventHandler;
+import com.eightbitforest.thebomplugin.event.InventoryChangedEvent;
+import com.eightbitforest.thebomplugin.gui.ItemListGui;
+import com.eightbitforest.thebomplugin.config.BOMConfig;
+import com.eightbitforest.thebomplugin.config.Keys;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@JEIPlugin
-public class TheBOMPlugin implements IModPlugin
-{
-    public static String uid = "thebomplugin";
-
+public class TheBOMPlugin {
     private static TheBOMPlugin instance;
 
-    private BOMCategory category;
+    // TODO: Use item list manager
+    private ItemListGui itemListGui;
 
-    private IJeiRuntime runtime;
-    private IIngredientRegistry ingredientRegistry;
-    private GuiDrawables guiDrawables;
+    public TheBOMPlugin() {
+        instance = this;
+    }
 
     public static TheBOMPlugin getInstance() {
         return instance;
     }
 
-    public BOMCategory getCategory() {
-        return category;
+    public ItemListGui getItemListGui() {
+        return itemListGui;
     }
 
-    public IJeiRuntime getRuntime() {
-        return runtime;
+    public void preInit(FMLPreInitializationEvent e) {
+        Keys.register();
+        BOMConfig.load(e.getSuggestedConfigurationFile());
     }
 
-    public IIngredientRegistry getIngredientRegistry() {
-        return ingredientRegistry;
-    }
+    public void postInit(FMLPostInitializationEvent e) {
+        itemListGui = new ItemListGui(Minecraft.getMinecraft());
 
-    public GuiDrawables getGuiDrawables() {
-        return guiDrawables;
-    }
+        BOMEventHandler guiEventHandler = new BOMEventHandler(itemListGui);
+        MinecraftForge.EVENT_BUS.register(guiEventHandler);
 
-    public TheBOMPlugin(){
-        instance = this;
-    }
-
-    @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
-        guiDrawables = new GuiDrawables(registry.getJeiHelpers());
-        registry.addRecipeCategories(category = new BOMCategory(registry.getJeiHelpers().getGuiHelper()));
-    }
-
-    @Override
-    public void register(IModRegistry registry) {
-        registry.addRecipes(Recipes.getValidRecipes(registry.getJeiHelpers()), uid);
-        registry.handleRecipes(BOMRecipe.class, recipe -> new BOMWrapper(recipe, registry.getJeiHelpers()), uid);
-        ingredientRegistry = registry.getIngredientRegistry();
-    }
-
-    @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-        runtime = jeiRuntime;
+        InventoryChangedEvent inventoryChangedEvent = new InventoryChangedEvent();
+        MinecraftForge.EVENT_BUS.register(inventoryChangedEvent);
+        inventoryChangedEvent.registerInventoryChangedEventListener(itemListGui);
     }
 }

@@ -7,7 +7,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class GuiHelpers {
+public class GuiHelper {
+    private GuiHelper() {
+
+    }
+
     public static void drawSmallString(FontRenderer fontRenderer, int x, int y, String text, float fontScale, boolean rightAlign) {
         drawSmallString(fontRenderer, x, y, text, fontScale, rightAlign, 16777215);
     }
